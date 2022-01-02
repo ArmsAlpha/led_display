@@ -6,6 +6,9 @@
 //Possibly use fastLED's build-in palette framework for colors?
 //Alpha blending support
 
+
+//Adding a new comment here to test git stuff
+
 #include <Adafruit_CircuitPlayground.h>
 #include <FastLED.h>
 #include "led_canvas.h"
