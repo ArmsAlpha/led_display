@@ -5,12 +5,14 @@
 //POSITIVE/NEGATIVE MASKING: Apply effects to the bits included in sprite mask, or all bits NOT covered by sprite mask
 //Possibly use fastLED's build-in palette framework for colors?
 //Alpha blending support
+//Support for loading sprites from .bmp
 
 
 //Adding a new comment here to test git stuff
 
 #include <Adafruit_CircuitPlayground.h>
 #include <FastLED.h>
+#include <Adafruit_GFX.h>
 #include "led_canvas.h"
 #include "led_drawables.h"
 #include "sprites.h"
@@ -30,10 +32,11 @@
 
 CRGB leds[NUM_LEDS];
 CHSV hsv_leds[NUM_LEDS];
-Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, Canvas::SW, 1, hsv_leds);
+Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, Canvas::ORIGIN_SW, 1, hsv_leds);
 
-uint8_t mode = 3; //Keeps track of current display mode
+uint8_t mode = 4; //Keeps track of current display mode
 unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
+unsigned int chat_delay = 1000; //Min. length of time before twitch chat updates
 
 int mZ;
 int mY;
@@ -49,6 +52,22 @@ CHSV pupil_colors[8] = {CHSV(255, 255, 255),
 CHSV white_c = CHSV(100,0,255);
 int p_color_num = 0;
 
+CHSV chat_colors[15] = {CHSV(0,   240,   120),
+                        CHSV(  160,   240, 120),
+                        CHSV(80, 240, 60),
+                        CHSV(0, 163, 100),
+                        CHSV(11, 240, 158),
+                        CHSV(53, 146, 120),
+                        CHSV(11, 240, 120),
+                        CHSV(98, 121, 87),
+                        CHSV(29, 179, 118),
+                        CHSV(17, 180, 113),
+                        CHSV(121, 61, 120),
+                        CHSV(140, 240, 134),
+                        CHSV(220, 240, 169),
+                        CHSV(181, 182, 127),
+                        CHSV(0, 255, 127),};
+
 //-------------FUNCTIONS-------------
 
 //Check for new inputs, called every frame. Returns a value based on input
@@ -56,15 +75,18 @@ uint8_t listen(){
   
 }
 
+//
 void changeMode(uint8_t t_mode){
   
 }
 
+//
 uint8_t inRange(float low, float high, float x)
 {
     return ((x-high)*(x-low) <= 0);
 }
 
+//
 int remapZ(float t_z){
   if(t_z>3){
     return -4;
@@ -103,6 +125,16 @@ int remapY(float t_y){
   else return 0;
 }
 
+
+//Shifts the contents of the canvas up by the number of lines specified
+void shiftup(int num_lines){
+  for(int i=0; i>canvas.getHeight(); i++){
+    for(int j=0; j>canvas.getWidth(); j++){     
+      if(i-num_lines>=0) canvas.drawPoint(j,i-num_lines,canvas.getPoint(j,i),0);
+    }
+  }
+}
+
 //------------ANIMATIONS------------
 //scrolls a string from right to left
 void marquee(char str[], int len, int y, CHSV color){
@@ -115,17 +147,17 @@ void eyeBlink(){
   canvas.drawSprite16(10,1,9,12,eyeballHalfR2_16,white_c);
   FastLED.show();
   canvas.erase();
-  delay(25);
+  FastLED.delay(25);
   canvas.drawSprite16(1,1,9,12,eyeballHalfL3_16,white_c);
   canvas.drawSprite16(10,1,9,12,eyeballHalfR3_16,white_c);
   FastLED.show();
   canvas.erase();
-  delay(100);
+  FastLED.delay(100);
   canvas.drawSprite16(1,1,9,12,eyeballHalfL2_16,white_c);
   canvas.drawSprite16(10,1,9,12,eyeballHalfR2_16,white_c);
   FastLED.show();
   canvas.erase();
-  delay(50);
+  FastLED.delay(50);
   p_color_num +=1;
   p_color_num = p_color_num%8;
 }
@@ -138,36 +170,11 @@ void setup() {
   CircuitPlayground.setAccelRange(LIS3DH_RANGE_2_G);
   Serial.begin(9600);
   //init leds
-  FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
+  FastLED.addLeds<NEOPIXEL, LED_PIN>(hsv_leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
   //init pins
   pinMode(LED_PIN, OUTPUT);
- 
-  //Test out the new canvas system
-  canvas.drawSprite16(1,1,9,12,eyeballHalfL_16,white_c);
-  canvas.drawSprite16(10,1,9,12,eyeballHalfR_16,white_c);
-  canvas.drawSprite8(8,5,4,4,pupil_8,white_c);
-  canvas.printCanvas();
-  Serial.println("Done Drawing\n");
-  FastLED.show();
-  canvas.erase();
-  /*
-  canvas.drawRect(2,4,2,3,pupil_colors[0]);
-  canvas.drawRect(4,7,2,3,pupil_colors[1]);
-  canvas.drawRect(6,4,2,3,pupil_colors[2]);
-  canvas.drawRect(8,7,2,3,pupil_colors[3]);
-  canvas.drawRect(10,4,2,3,pupil_colors[4]);
-  canvas.drawRect(12,7,2,3,pupil_colors[5]);
-  canvas.drawRect(14,4,2,3,pupil_colors[6]);
-  canvas.drawRect(16,7,2,3,pupil_colors[7]);
-  canvas.drawRect(0,11,20,1,pupil_colors[0]);
-  FastLED.show();
-  */
-  
-  /*
-  leds[1] = white_c;
-  FastLED.show();
-  */
+
 }
 
 //-------------LOOP-------------
@@ -216,10 +223,33 @@ void loop() {
 
        mZ = 8+remapZ(CircuitPlayground.motionZ()); //map();
        mY = 5+remapY(CircuitPlayground.motionY());
-       canvas.drawSprite8(mZ,mY,4,4,pupil_8,pupil_colors[p_color_num]); //TODO: Use accelerometer to have pupil follow rotation
+       canvas.drawSprite8(mZ,mY,4,4,pupil_8,pupil_colors[p_color_num]);
        FastLED.show();
        canvas.erase();
        break; 
+
+       case 4: //Twitch Chat
+      /*IDEAS:
+       - Display lines that scroll up every so often to emulate a scrolling chat
+       - Initial line is random length and color to represent username
+       - Possibility of random colored bit + empty bit to represent sub badge
+       - SUbsequent lines are grey and can be random length/span multiple lines
+       - Duration before scrolling is random but is a multiple of the time it takes for twitch chat to update
+       - Scroll is achieved by moving contents of buffer up x lines depending on how many new chats are added
+       
+       - Make function drawMessage() which takes in parameters for lengths (name, message, etc.)
+       */
+
+      //Draw name of random length and color
+      //(Random) Overwrite first 2 bits of name with a color followed by black
+      //Decide how long the message will be
+      //Start drawing message 2 spaces after name ends
+      //>If message would reach the edge of the screen, move down a line and continue until counter is done
+      //>While message is being drawn, have chance to replace bit with blank bit if there have been consecutive bits drawn
+      //
+
+      //!!!Have chance to draw chat reminder instead of message
+      break;
   }
   listen();
   while(frametimer < FRAME_TIME_MILLIS){

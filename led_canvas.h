@@ -9,15 +9,33 @@ class Canvas
     Canvas(uint8_t t_x, uint8_t t_y, uint8_t t_s, uint8_t t_l, CHSV *t_leds);
     
     //Layout Definitions:
+    //TODO: Change to enum{}
+    /*
     static uint8_t NW;
     static uint8_t NE;
     static uint8_t SW;
     static uint8_t SE;
+    */
+
+    enum{
+      ORIGIN_NW,
+      ORIGIN_NE,
+      ORIGIN_SW,
+      ORIGIN_SE
+    };
+
+    enum{
+      WRAP_H,
+      WRAP_V
+    };
     
     //Accessors:
-    uint8_t getSizeX();
-    uint8_t getSizeY();
+    uint8_t getWidth();
+    uint8_t getHeight();
     int getSize();
+    CHSV* getLEDs();
+    CHSV getPoint(int8_t t_x, uint8_t t_y);
+    
     uint8_t inboundsX(uint8_t t_x);
     uint8_t inboundsY(uint8_t t_y);
     uint8_t inbounds(uint8_t t_x, uint8_t t_y);
@@ -32,10 +50,13 @@ class Canvas
     void drawPoint(uint8_t x, uint8_t y, CHSV t_color, uint8_t t_a);
     void drawRect(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, CHSV t_color);
     void drawLine(int8_t x, int8_t y, int8_t x2, int8_t y2, CHSV t_color);
+    
+    //TODO: Replace drawSprite series with drawBMP, make size scalable
     void drawSprite(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint8_t *sprite, CHSV *palette);
     void drawSprite8(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint8_t *sprite, CHSV t_color);
     void drawSprite16(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint16_t *sprite, CHSV t_color);
     void drawSprite32(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint32_t *sprite, CHSV t_color);
+    
     void drawChar(char character, int8_t x, int8_t y, CHSV t_color);
     void drawString(char str[], int8_t x, int8_t y, CHSV t_color);
 
@@ -51,8 +72,8 @@ class Canvas
     uint8_t size_x;
     uint8_t size_y;
     uint8_t snake; //Denotes whether row directions alternate or stay the same. Default = 0
-    uint8_t layout; //Denotes starting point of matrix, see definitions below. Default = 0
+    uint8_t origin; //Denotes starting point of matrix, see definitions below. Default = 0
     static word font[];
-    CHSV* leds;
+    CHSV* leds; //TODO: Should the leds operate using RGB or HSV? Note: HSV can convert to RGB but not vice-versa, but HSV is better for color math (how expenive is constant conversion? and is there a loss in coplor quality?)
     
 };
