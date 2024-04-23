@@ -14,11 +14,11 @@
       return pos_x;
       //TODO: return array of [x,y]
     }
-    uint8_t Drawable::get_size_x(){
-      return size_x;
+    uint8_t Drawable::get_width(){
+      return width;
     }
-    uint8_t Drawable::get_size_y(){
-      return size_y;
+    uint8_t Drawable::get_height(){
+      return height;
     }
     uint8_t Drawable::get_size(){
       //TODO: return array of [s_x, s_y]
@@ -30,7 +30,7 @@
       return age;
     }
     uint8_t Drawable::inbounds(int t_x, int t_y){
-      if(pos_x>=0 && pos_y>=0 && pos_x+size_x<t_x && pos_y+size_y<t_y) return 1;
+      if(pos_x>=0 && pos_y>=0 && pos_x+width<t_x && pos_y+height<t_y) return 1;
       else return 0;
     }
   
@@ -62,8 +62,8 @@
     Point::Point(int8_t x, int8_t y){
       pos_x = x;
       pos_y = y;
-      size_x = 1;
-      size_y = 1;
+      width = 1;
+      height = 1;
       
     }
     
@@ -72,20 +72,20 @@
     Rect::Rect(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y){
       pos_x = x;
       pos_y = y;
-      size_x = s_x;
-      size_y = s_y;
+      width = s_x;
+      height = s_y;
       alpha = 0;
     }
     Rect::Rect(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint8_t t_alpha){ //TODO: Merge both constructors using optional param for angle
       pos_x = x;
       pos_y = y;
-      size_x = s_x;
-      size_y = s_y;
+      width = s_x;
+      height = s_y;
       alpha = t_alpha;
     }
     /*
     void Rect::draw(Canvas* t_c){
-      if(visible) t_c->drawRect(this->get_pos_x(), this->get_pos_y(), this->get_size_x(), this->get_size_y(), this->get_angle());
+      if(visible) t_c->drawRect(this->get_pos_x(), this->get_pos_y(), this->get_width(), this->get_height(), this->get_angle());
     }
     */
     
@@ -96,8 +96,8 @@
       pos_y = y;
       pos_x2 = x2;
       pos_y2 = y2;
-      size_x = x2-x;
-      size_y = y2-y;
+      width = x2-x;
+      height = y2-y;
       alpha = 0;
   }
 
@@ -106,8 +106,8 @@
       pos_y = y;
       pos_x2 = x2;
       pos_y2 = y2;
-      size_x = x2-x;
-      size_y = y2-y;
+      width = x2-x;
+      height = y2-y;
       alpha = t_alpha;
   }
 

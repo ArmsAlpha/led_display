@@ -11,9 +11,9 @@ class Drawable
     int8_t get_pos_y();
     int8_t get_pos(); //Gets [pos_x,pos_y]
     //Size
-    uint8_t get_size_x();
-    uint8_t get_size_y();
-    uint8_t get_size(); //Gets [size_x,size_y]
+    uint8_t get_width();
+    uint8_t get_height();
+    uint8_t get_size(); //Gets [width,height]
     //Misc:
     int get_alpha();
     unsigned long get_age();
@@ -31,8 +31,8 @@ class Drawable
     protected:
       int8_t pos_x;
       int8_t pos_y;
-      uint8_t size_x;
-      uint8_t size_y;
+      uint8_t width;
+      uint8_t height;
       unsigned long age = 0;
       uint8_t alpha;
       uint8_t visible = 1;
