@@ -1,14 +1,11 @@
 //big thanks to https://github.com/Roachbones/tv_head as a point of reference and inspiration
 
-//MODE IDEAS: terminal, expressions, text, eyeball, audio visualizer, fishbowl, undertale
+//MODE IDEAS: terminal, emoticons, text, eyeball, audio visualizer, fishbowl, undertale, 8-ball
 //MASKING: allow sprites to be used for masking effects such as fade/color change
 //POSITIVE/NEGATIVE MASKING: Apply effects to the bits included in sprite mask, or all bits NOT covered by sprite mask
 //Possibly use fastLED's build-in palette framework for colors?
 //Alpha blending support
 //Support for loading sprites from .bmp
-
-
-//Adding a new comment here to test git stuff
 
 #include <Adafruit_CircuitPlayground.h>
 #include <FastLED.h>
@@ -31,8 +28,7 @@
 #define BUTTON_POWER 4
 
 CRGB leds[NUM_LEDS];
-CHSV hsv_leds[NUM_LEDS];
-Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, Canvas::ORIGIN_SW, 1, hsv_leds);
+Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, 1);
 
 uint8_t mode = 4; //Keeps track of current display mode
 unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
@@ -45,28 +41,28 @@ CHSV pupil_colors[8] = {CHSV(255, 255, 255),
                         CHSV(100, 255, 20),
                         CHSV(250, 230, 20),
                         CHSV(220, 110, 20),
-                        CHSV(255, 25, 120),
-                        CHSV(210, 25, 255),
-                        CHSV(40, 165, 240),
-                        CHSV(40, 20, 230)};
+                        CHSV(255, 25,  120),
+                        CHSV(210, 25,  255),
+                        CHSV(40,  165, 240),
+                        CHSV(40,  20,  230)};
 CHSV white_c = CHSV(100,0,255);
 int p_color_num = 0;
 
-CHSV chat_colors[15] = {CHSV(0,   240,   120),
-                        CHSV(  160,   240, 120),
-                        CHSV(80, 240, 60),
-                        CHSV(0, 163, 100),
-                        CHSV(11, 240, 158),
-                        CHSV(53, 146, 120),
-                        CHSV(11, 240, 120),
-                        CHSV(98, 121, 87),
-                        CHSV(29, 179, 118),
-                        CHSV(17, 180, 113),
-                        CHSV(121, 61, 120),
+CHSV chat_colors[15] = {CHSV(0,   240, 120),
+                        CHSV(160, 240, 120),
+                        CHSV(80,  240, 60),
+                        CHSV(0,   163, 100),
+                        CHSV(11,  240, 158),
+                        CHSV(53,  146, 120),
+                        CHSV(11,  240, 120),
+                        CHSV(98,  121, 87),
+                        CHSV(29,  179, 118),
+                        CHSV(17,  180, 113),
+                        CHSV(121, 61,  120),
                         CHSV(140, 240, 134),
                         CHSV(220, 240, 169),
                         CHSV(181, 182, 127),
-                        CHSV(0, 255, 127),};
+                        CHSV(0,   255, 127),};
 
 //-------------FUNCTIONS-------------
 
@@ -170,7 +166,7 @@ void setup() {
   CircuitPlayground.setAccelRange(LIS3DH_RANGE_2_G);
   Serial.begin(9600);
   //init leds
-  FastLED.addLeds<NEOPIXEL, LED_PIN>(hsv_leds, NUM_LEDS);
+  FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
   //init pins
   pinMode(LED_PIN, OUTPUT);
