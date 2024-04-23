@@ -3,60 +3,46 @@
 //---CLASS CANVAS:
 
   //===Constructors===
-  
-  Canvas::Canvas(uint8_t t_x, uint8_t t_y, CHSV *t_leds){
-    /*size_x = t_x;
-    size_y = t_y;
-    leds = t_leds;
-    snake = 0;
-    layout = 0;
-    */
-    this -> Canvas(uint8_t t_x, uint8_t t_y, ORIGIN_NW, 0, t_leds)
-  }
-  
-  //Constructor using defined origin and snake attribute
-  Canvas::Canvas(uint8_t t_x, uint8_t t_y, uint8_t t_o, uint8_t t_s, CHSV *t_leds){
-    size_x = t_x;
-    size_y = t_y;
-    leds = t_leds;
-    snake = t_s;
+  Canvas::Canvas(uint8_t t_x, uint8_t t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, uint8_t t_s){
+    width = t_x;
+    height = t_y;
     origin = t_o;
+    wrap = t_wr;
+    snake = t_s;
+    leds = t_leds;
+    leds_buffer = new CRGB[t_x*t_y];
+    bmp = NULL;
   }
-
-//TODO: Can have one constructor call the other, but in what order?
-//i.e. First one calling second one with t_l and t_s as 0, or second one calling first one after populating snake and layout
-//Also look into whether using default function values for undefined arguments is better or worse practice
-
 
   //===Accessors===
-  
   uint8_t Canvas::getWidth(){
-    return size_x;
+    return width;
   }
   uint8_t Canvas::getHeight(){
-    return size_y;
+    return height;
   }
   int Canvas::getSize(){
     return getWidth()*getHeight();
   }
 
-  CHSV* Canvas::getLEDs(){
+  CRGB* Canvas::getLEDs(){
     return leds;
   }
 
-  CHSV Canvas::getPoint(int8_t t_x, uint8_t t_y){
+  CRGB Canvas::getPoint(int8_t t_x, uint8_t t_y){
     return leds[toIndex(t_x, t_y)];
   }
 
   uint8_t Canvas::inboundsX(uint8_t t_x){
-    return (t_x>=0 && t_x<size_x);
+    return (t_x>=0 && t_x<width);
   }
   uint8_t Canvas::inboundsY(uint8_t t_y){
-    return (t_y>=0 && t_y<size_y);
+    return (t_y>=0 && t_y<height);
   }
   uint8_t Canvas::inbounds(uint8_t t_x, uint8_t t_y){
     return (inboundsX(t_x) && inboundsX(t_y));
   }
+
   void Canvas::printCanvas(){
     Serial.print("Canvas Size: ");
     Serial.println(getSize());
@@ -66,76 +52,86 @@
     for(int i=0; i<getHeight(); i++){
       Serial.print("[");
       for(int j=0; j<getWidth(); j++){
-        if(leds[remapXY(j,i)].v==0){
-          Serial.print(" . ");
+        if(leds[remapXY(j,i)]){
+          Serial.print(" X ");
         }
         else{
-          Serial.print(" X ");
+          Serial.print(" . ");
         }
       }
       Serial.print("]\n");
     }
   }
 
+  //===Helpers===
   int Canvas::toIndex(int t_x, int t_y){
-    //return remapIndex((t_x+(size_x*t_y))%getSize());
-    return (t_x+(size_x*t_y));
+    //return remapIndex((t_x+(width*t_y))%getSize());
+    return (t_x+(width*t_y));
   }
   uint8_t Canvas::toXY(int t_i){
     return 0; //TODO: Do the opposite of toIndex. Not sure if this is even needed.
   }
 
-  int Canvas::remapXY(int t_x, int t_y){
+  int Canvas::remapIndex(int t_i){
+    int t_x = t_i % getWidth();
+    int t_y = t_i/getWidth();
     int rev_x = getWidth() - 1 - t_x;
     int rev_y = getHeight() - 1 - t_y;
     switch(origin){
-      case 0 : //NW
+      case ORIGIN_NW : //NW
         if(snake == 0 || (snake == 1 && t_y % 2 == 0)){
-          return (size_x * t_y) + t_x;
+          return (width * t_y) + t_x;
         }
-        else return (size_x * t_y) + rev_x;
-      case 1 : //NE
+        else return (width * t_y) + rev_x;
+      case ORIGIN_NE : //NE
         if(snake == 0 || (snake == 1 && t_y % 2 == 0)){
-          return (size_x * t_y) +  rev_x;
+          return (width * t_y) +  rev_x;
         }
-        else return (size_x * t_y) +  t_x;
-      case 2 : //SW
+        else return (width * t_y) +  t_x;
+      case ORIGIN_SW : //SW
         if(snake == 0 || (snake == 1 && t_y % 2 != getHeight()%2)){
-          return (size_x * rev_y) + t_x;
+          return (width * rev_y) + t_x;
         }
-        else return (size_x * rev_y) + rev_x;
-      case 3 : //SE
+        else return (width * rev_y) + rev_x;
+      case ORIGIN_SE : //SE
         if(snake == 0 || (snake == 1 && t_y % 2 != getHeight()%2)){
-          return (size_x * rev_y) + rev_x;
+          return (width * rev_y) + rev_x;
         }
-        else return (size_x * rev_y) + t_x;
+        else return (width * rev_y) + t_x;
       default :
         return -1;
     }
   }
+
+  int Canvas::remapXY(int t_x, int t_y){
+    return remapIndex(toIndex(t_x,t_y));
+  }
   
   //=========Drawing Functions=========
 
-  void Canvas::drawPoint(uint8_t x, uint8_t y, CHSV t_color, uint8_t t_a){
+
+  //TODO: Have drawPoint and other drawing functions effect the buffer, and don't remap indeces at draw time (remap when copying buffer)
+  void Canvas::drawPoint(uint8_t x, uint8_t y, CRGB t_color, uint8_t t_a){
     //TODO: implement alpha blending
-    if(inbounds(x,y)) leds[remapXY(x,y)]=t_color;
+    //if(inbounds(x,y)) leds[remapXY(x,y)]=t_color;
+    if(inbounds(x,y)) leds_buffer[toIndex(x,y)]=t_color;
   }
 
-  void Canvas::drawRect(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, CHSV t_color){
-    for(int i=y; i<y+s_y; i++){
+  void Canvas::drawRect(int8_t x, int8_t y, uint8_t dx, uint8_t dy, CRGB t_color){
+    for(int i=y; i<y+dy; i++){
       if(i >= getHeight()) break;
-      for(int j=x; j<x+s_x; j++){
+      for(int j=x; j<x+dx; j++){
         if(j >= getWidth()) break;
         if(inbounds(j,i)) drawPoint(j,i,t_color, 0);
       }
     }
   }
   
-  void Canvas::drawLine(int8_t x, int8_t y, int8_t x2, int8_t y2, CHSV t_color){
+  void Canvas::drawLine(int8_t x, int8_t y, int8_t x2, int8_t y2, CRGB t_color){
     
   }
   
-  void Canvas::drawSprite8(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint8_t *sprite, CHSV t_color){
+  void Canvas::drawSprite8(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint8_t *sprite, CRGB t_color){
     uint8_t row;
     for(int i=0; i<s_y && i<8; i++){
       if((y+i) >= getHeight()) break;
@@ -150,7 +146,7 @@
     }
   }
   
-  void Canvas::drawSprite16(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint16_t *sprite, CHSV t_color){
+  void Canvas::drawSprite16(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint16_t *sprite, CRGB t_color){
     uint16_t row;
     for(int i=0; i<s_y && i<16; i++){
       if((y+i) >= getHeight()) break;
@@ -165,7 +161,7 @@
     }
   }
   
-  void Canvas::drawSprite32(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint32_t *sprite, CHSV t_color){
+  void Canvas::drawSprite32(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint32_t *sprite, CRGB t_color){
     uint32_t row;
     for(int i=0; i<s_y && i<32; i++){
       if((y+i) >= getHeight()) break;
@@ -180,7 +176,7 @@
     }
   }
   
-  void Canvas::drawChar(char character, int8_t x, int8_t y, CHSV t_color){
+  void Canvas::drawChar(char character, int8_t x, int8_t y, CRGB t_color){
     if (character > 96) { // convert lowercase to uppercase
       character -= 32;
     }
@@ -210,7 +206,7 @@
     }
   }
   
-  void Canvas::drawString(char str[], int8_t x, int8_t y, CHSV t_color){
+  void Canvas::drawString(char str[], int8_t x, int8_t y, CRGB t_color){
     int i = 0;
     char chr = str[0];
     int sumX = x;
@@ -223,15 +219,29 @@
     while ((chr != 0) and (sumX < getWidth()));
     }
 
+  void Canvas::linearFade(uint8_t amount){
+    for(int i=0; i<getSize(); i++){
+      leds[i].subtractFromRGB(amount);
+    }
+  }
+  
   void Canvas::erase(){
     for(int i=0; i<getSize(); i++){
-      leds[i]=CHSV(0,0,0);
+      leds[i]=CRGB(0,0,0);
     }
   }
 
-  void Canvas::linearFade(uint8_t amount){
-    for(int i=0; i<getSize(); i++){
-      leds[i].v-=amount;
+
+  void Canvas::update(){
+    /*
+    for(int i=0; i+=getHeight(); i++){
+      for(int j=0; j+=getWidth(); j++){
+        leds[remapXY(j,i)] = leds_buffer[toIndex(j,i)];
+      }
+    }
+    */
+    for(int i=0; i+=getSize(); i++){
+      leds[remapIndex(i)] = leds_buffer[i];
     }
   }
 
