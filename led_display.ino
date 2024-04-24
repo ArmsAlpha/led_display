@@ -28,7 +28,7 @@
 #define BUTTON_POWER 4
 
 CRGB leds[NUM_LEDS];
-Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, 1);
+Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, WRAP_H, 1);
 
 uint8_t mode = 4; //Keeps track of current display mode
 unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
