@@ -33,6 +33,10 @@
     return leds_buffer;
   }
 
+  BMP* Canvas::getBitmap(){
+    return bmp;
+  }
+
   CRGB Canvas::getPoint(int8_t t_x, uint8_t t_y){
     return leds[toIndex(t_x, t_y)];
   }
