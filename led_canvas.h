@@ -26,6 +26,7 @@ class Canvas
     uint8_t getHeight();
     int getSize();
     CRGB* getLEDs();
+    CRGB* getBuffer();
     CRGB getPoint(int8_t t_x, uint8_t t_y);
     
     uint8_t inboundsX(uint8_t t_x);
