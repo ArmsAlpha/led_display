@@ -18,6 +18,7 @@ class Canvas
       WRAP_H,
       WRAP_V
     };
+
     //Constructors:
     Canvas(uint8_t t_x, uint8_t t_y, CRGB *t_leds, Origin t_o=ORIGIN_NW, Wrap t_wr=WRAP_H, uint8_t t_s=0);
 
@@ -30,6 +31,7 @@ class Canvas
     BMP* getBitmap();
     CRGB getPoint(int8_t t_x, uint8_t t_y);
     
+    //Utilities
     uint8_t inboundsX(uint8_t t_x);
     uint8_t inboundsY(uint8_t t_y);
     uint8_t inbounds(uint8_t t_x, uint8_t t_y);
@@ -54,6 +56,12 @@ class Canvas
     
     void drawChar(char character, int8_t x, int8_t y, CRGB t_color);
     void drawString(char str[], int8_t x, int8_t y, CRGB t_color);
+
+    //BMP Functions
+    void newBitmap();
+    void fillBitmap(unsigned int x0, unsigned int y0, unsigned int dx, unsigned int dy, CRGB crgb);
+    void blitBitmap(int i0, int x0, int y0, int dx, int dy);
+    void renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB crgb); //Render bmp at coordinates
 
     void drawObj(Drawable *t_d); //Calls draw() for the specified object
 

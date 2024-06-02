@@ -1,4 +1,5 @@
 //big thanks to https://github.com/Roachbones/tv_head as a point of reference and inspiration
+//as well as https://github.com/lyriarte/StripDisplay/ for key insight on using bitmaps
 
 //MODE IDEAS: terminal, emoticons, text, eyeball, audio visualizer, fishbowl, undertale, 8-ball
 //MASKING: allow sprites to be used for masking effects such as fade/color change
