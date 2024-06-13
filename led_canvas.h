@@ -1,5 +1,6 @@
-#pragma once
 #include "qdbmp.h"
+
+#pragma once
 #include <Arduino.h>
 #include <FastLED.h>
 class Drawable;
@@ -52,7 +53,7 @@ class Canvas
     
     //TODO: Replace drawSprite series with drawBMP, make size scalable
     void drawSprite(int x, int y, int s_x, int s_y, int *sprite, CRGB *palette);
-    void drawSprite8(int x, int y, int s_x, int s_y, int *sprite, CRGB t_color);
+    void drawSprite8(int x, int y, int s_x, int s_y, uint8_t *sprite, CRGB t_color);
     void drawSprite16(int x, int y, int s_x, int s_y, uint16_t *sprite, CRGB t_color);
     void drawSprite32(int x, int y, int s_x, int s_y, uint32_t *sprite, CRGB t_color);
     
@@ -76,12 +77,16 @@ class Canvas
     //Update
     void update(); //Copy (and translate) the buffer array to the main array used by FastLED
 
-  protected:
+  private:
+
+    void init(int t_x, int t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, int t_s);
+
     int width;
     int height;
-    int origin; //Denotes starting point of matrix
+    int origin; //Denotes starting corner of matrix
     int wrap; //Denotes wrap direction (horizontal or vertical)
-    int snake; //Denotes whether row directions alternate or stay the same
+    int snake; //Denotes whether row directions alternate or remain the same
+
     static word font[];
     CRGB* leds; //TODO: Should the leds operate using RGB or HSV? Note: HSV can convert to RGB but not vice-versa, but HSV is better for color math (how expenive is constant conversion? and is there a loss in coplor quality?)
     CRGB* leds_buffer;

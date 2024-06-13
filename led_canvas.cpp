@@ -4,6 +4,10 @@
 
   //===Constructors===
   Canvas::Canvas(int t_x, int t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, int t_s){
+    this->init(t_x, t_y, t_leds, t_o, t_wr, t_s);
+  }
+
+  void Canvas::init(int t_x, int t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, int t_s){
     width = t_x;
     height = t_y;
     origin = t_o;
@@ -140,7 +144,7 @@
     
   }
   
-  void Canvas::drawSprite8(int x, int y, int s_x, int s_y, int *sprite, CRGB t_color){
+  void Canvas::drawSprite8(int x, int y, int s_x, int s_y, uint8_t *sprite, CRGB t_color){
     int row;
     for(int i=0; i<s_y && i<8; i++){
       if((y+i) >= getHeight()) break;
