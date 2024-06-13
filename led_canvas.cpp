@@ -3,7 +3,7 @@
 //---CLASS CANVAS:
 
   //===Constructors===
-  Canvas::Canvas(uint8_t t_x, uint8_t t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, uint8_t t_s){
+  Canvas::Canvas( t_x,  t_y, CRGB *t_leds, Origin t_o, Wrap t_wr,  t_s){
     width = t_x;
     height = t_y;
     origin = t_o;
@@ -12,13 +12,14 @@
     leds = t_leds;
     leds_buffer = new CRGB[t_x*t_y];
     bmp = NULL;
+    newBitmap();
   }
 
   //===Accessors===
-  uint8_t Canvas::getWidth(){
+   Canvas::getWidth(){
     return width;
   }
-  uint8_t Canvas::getHeight(){
+   Canvas::getHeight(){
     return height;
   }
   int Canvas::getSize(){
@@ -37,17 +38,17 @@
     return bmp;
   }
 
-  CRGB Canvas::getPoint(int8_t t_x, uint8_t t_y){
-    return leds[toIndex(t_x, t_y)];
+  CRGB Canvas::getPoint( t_x,  t_y){
+    return leds_buffer[toIndex(t_x, t_y)];
   }
 
-  uint8_t Canvas::inboundsX(uint8_t t_x){
+   Canvas::inboundsX( t_x){
     return (t_x>=0 && t_x<width);
   }
-  uint8_t Canvas::inboundsY(uint8_t t_y){
+   Canvas::inboundsY( t_y){
     return (t_y>=0 && t_y<height);
   }
-  uint8_t Canvas::inbounds(uint8_t t_x, uint8_t t_y){
+   Canvas::inbounds( t_x,  t_y){
     return (inboundsX(t_x) && inboundsX(t_y));
   }
 
@@ -76,7 +77,7 @@
     //return remapIndex((t_x+(width*t_y))%getSize());
     return (t_x+(width*t_y));
   }
-  uint8_t Canvas::toXY(int t_i){
+   Canvas::toXY(int t_i){
     return 0; //TODO: Do the opposite of toIndex. Not sure if this is even needed.
   }
 
@@ -119,13 +120,13 @@
 
 
   //TODO: Have drawPoint and other drawing functions effect the buffer, and don't remap indeces at draw time (remap when copying buffer)
-  void Canvas::drawPoint(uint8_t x, uint8_t y, CRGB t_color, uint8_t t_a){
+  void Canvas::drawPoint( x,  y, CRGB t_color,  t_a){
     //TODO: implement alpha blending
     //if(inbounds(x,y)) leds[remapXY(x,y)]=t_color;
     if(inbounds(x,y)) leds_buffer[toIndex(x,y)]=t_color;
   }
 
-  void Canvas::drawRect(int8_t x, int8_t y, uint8_t dx, uint8_t dy, CRGB t_color){
+  void Canvas::drawRect( x,  y,  dx,  dy, CRGB t_color){
     for(int i=y; i<y+dy; i++){
       if(i >= getHeight()) break;
       for(int j=x; j<x+dx; j++){
@@ -135,12 +136,12 @@
     }
   }
   
-  void Canvas::drawLine(int8_t x, int8_t y, int8_t x2, int8_t y2, CRGB t_color){
+  void Canvas::drawLine( x,  y,  x2,  y2, CRGB t_color){
     
   }
   
-  void Canvas::drawSprite8(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint8_t *sprite, CRGB t_color){
-    uint8_t row;
+  void Canvas::drawSprite8( x,  y,  s_x,  s_y,  *sprite, CRGB t_color){
+     row;
     for(int i=0; i<s_y && i<8; i++){
       if((y+i) >= getHeight()) break;
       row=sprite[i];
@@ -154,7 +155,7 @@
     }
   }
   
-  void Canvas::drawSprite16(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint16_t *sprite, CRGB t_color){
+  void Canvas::drawSprite16( x,  y,  s_x,  s_y, uint16_t *sprite, CRGB t_color){
     uint16_t row;
     for(int i=0; i<s_y && i<16; i++){
       if((y+i) >= getHeight()) break;
@@ -169,7 +170,7 @@
     }
   }
   
-  void Canvas::drawSprite32(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint32_t *sprite, CRGB t_color){
+  void Canvas::drawSprite32( x,  y,  s_x,  s_y, uint32_t *sprite, CRGB t_color){
     uint32_t row;
     for(int i=0; i<s_y && i<32; i++){
       if((y+i) >= getHeight()) break;
@@ -184,12 +185,12 @@
     }
   }
   
-  void Canvas::drawChar(char character, int8_t x, int8_t y, CRGB t_color){
+  void Canvas::drawChar(char character,  x,  y, CRGB t_color){
     if (character > 96) { // convert lowercase to uppercase
       character -= 32;
     }
     word sprite = font[character - 32];
-    //uint8_t i = 0;
+    // i = 0;
     int sumX; int sumY;
     for (int j = 0; j < 3; j++) {
       sumX = x + j;
@@ -214,7 +215,7 @@
     }
   }
   
-  void Canvas::drawString(char str[], int8_t x, int8_t y, CRGB t_color){
+  void Canvas::drawString(char str[],  x,  y, CRGB t_color){
     int i = 0;
     char chr = str[0];
     int sumX = x;
@@ -227,12 +228,14 @@
     while ((chr != 0) and (sumX < getWidth()));
     }
 
-  void Canvas::linearFade(uint8_t amount){
+  void Canvas::linearFade( amount){
     for(int i=0; i<getSize(); i++){
-      leds[i].subtractFromRGB(amount);
+      leds_buffer[i].subtractFromRGB(amount);
     }
   }
   
+  //=========Bitmap Functions=========
+
 void Canvas::newBitmap() {
 	if (bmp != NULL)
 		BMP_Free(bmp);
@@ -269,7 +272,7 @@ void Canvas::renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, 
 
   void Canvas::erase(){
     for(int i=0; i<getSize(); i++){
-      leds[i]=CRGB(0,0,0);
+      leds_buffer[i]=CRGB(0,0,0);
     }
   }
 
@@ -288,10 +291,10 @@ void Canvas::renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, 
   }
 
   //==Constants==
-  /*uint8_t Canvas::NW = 0;
-  uint8_t Canvas::NE = 1;
-  uint8_t Canvas::SW = 2;
-  uint8_t Canvas::SE = 3;*/
+  /* Canvas::NW = 0;
+   Canvas::NE = 1;
+   Canvas::SW = 2;
+   Canvas::SE = 3;*/
   word Canvas::font[64] = {0b0000000000000000, 0b0000011101000000, 0b1100000000110000, 0b1111101010111110, 0b1101011111101100, 0b1001100100110010, 0b1111111101001110, 0b0000011000000000, 0b0111010001000000, 0b0000010001011100, 0b1010101110101010, 0b0010001110001000, 0b0000100010000000, 0b0010000100001000, 0b0000000001000000, 0b0000101110100000, 0b1111110001111110, 0b1000111111000010, 0b1011110101111010, 0b1000110101111110, 0b1110000100111110, 0b1110110101101110, 0b1111110101101110, 0b1000010000111110, 0b1111110101111110, 0b1110010100111110, 0b0000001010000000, 0b0000101010000000, 0b0010001010100010, 0b0101001010010100, 0b1000101010001000, 0b1000010101111000, 0b0111010001011010, 0b1111110100111110, 0b1111110101110110, 0b0111010001100010, 0b1111110001011100, 0b1111110101100010, 0b1111110100100000, 0b0111110001100110, 0b1111100100111110, 0b1000111111100010, 0b1000111111100000, 0b1111100100110110, 0b1111100001000010, 0b1111111000111110, 0b1111110000011110, 0b0111110001111100, 0b1111110100111000, 0b0111010011011010, 0b1111110100010110, 0b0110110101101100, 0b1000011111100000, 0b1111000001111110, 0b1111000011111100, 0b1111100011111110, 0b1101100100110110, 0b1110100101111110, 0b1001110101110010, 0b1111110001000000, 0b1000001110000010, 0b0000010001111110, 0b0100010000010000, 0b0000100001000010};
 
   
