@@ -4,23 +4,23 @@
 
 //---CLASS DRAWABLE:
     //Accessors:
-    int8_t Drawable::get_pos_x(){
+    int Drawable::get_pos_x(){
       return pos_x;
     }
-    int8_t Drawable::get_pos_y(){
+    int Drawable::get_pos_y(){
       return pos_y;
     }
-    int8_t Drawable::get_pos(){
+    int Drawable::get_pos(){
       return pos_x;
       //TODO: return array of [x,y]
     }
-    uint8_t Drawable::get_width(){
+    int Drawable::get_width(){
       return width;
     }
-    uint8_t Drawable::get_height(){
+    int Drawable::get_height(){
       return height;
     }
-    uint8_t Drawable::get_size(){
+    int Drawable::get_size(){
       //TODO: return array of [s_x, s_y]
     }
     int Drawable::get_alpha(){
@@ -29,22 +29,22 @@
     unsigned long Drawable::get_age(){
       return age;
     }
-    uint8_t Drawable::inbounds(int t_x, int t_y){
+    int Drawable::inbounds(int t_x, int t_y){
       if(pos_x>=0 && pos_y>=0 && pos_x+width<t_x && pos_y+height<t_y) return 1;
       else return 0;
     }
   
     //Position modification:
-    void Drawable::set_pos_x(int8_t x){
+    void Drawable::set_pos_x(int x){
       pos_x = x;
     }
-    void Drawable::set_pos_y(int8_t y){
+    void Drawable::set_pos_y(int y){
       pos_y = y;
     }
-    void Drawable::set_visible(uint8_t b){
+    void Drawable::set_visible(int b){
       visible = b;
     }
-    void Drawable::moveTo(int8_t x, int8_t y){
+    void Drawable::moveTo(int x, int y){
       set_pos_x(x);
       set_pos_y(y);
     }
@@ -59,7 +59,7 @@
     
 //-------------------------------------------------------------------------------
 //--CLASS POINT
-    Point::Point(int8_t x, int8_t y){
+    Point::Point(int x, int y){
       pos_x = x;
       pos_y = y;
       width = 1;
@@ -69,14 +69,14 @@
     
 //-------------------------------------------------------------------------------
 //--CLASS RECT
-    Rect::Rect(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y){
+    Rect::Rect(int x, int y, int s_x, int s_y){
       pos_x = x;
       pos_y = y;
       width = s_x;
       height = s_y;
       alpha = 0;
     }
-    Rect::Rect(int8_t x, int8_t y, uint8_t s_x, uint8_t s_y, uint8_t t_alpha){ //TODO: Merge both constructors using optional param for angle
+    Rect::Rect(int x, int y, int s_x, int s_y, int t_alpha){ //TODO: Merge both constructors using optional param for angle
       pos_x = x;
       pos_y = y;
       width = s_x;
@@ -91,7 +91,7 @@
     
 //-------------------------------------------------------------------------------
 //--CLASS LINE
-    Line::Line(int8_t x, int8_t y, int8_t x2, int8_t y2){
+    Line::Line(int x, int y, int x2, int y2){
       pos_x = x;
       pos_y = y;
       pos_x2 = x2;
@@ -101,7 +101,7 @@
       alpha = 0;
   }
 
-    Line::Line(int8_t x, int8_t y, int8_t x2, int8_t y2, uint8_t t_alpha){
+    Line::Line(int x, int y, int x2, int y2, int t_alpha){
       pos_x = x;
       pos_y = y;
       pos_x2 = x2;
