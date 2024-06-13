@@ -22,42 +22,42 @@ class Canvas
     };
 
     //Constructors:
-    Canvas( t_x,  t_y, CRGB *t_leds, Origin t_o=ORIGIN_NW, Wrap t_wr=WRAP_H,  t_s=0);
+    Canvas(int t_x, int t_y, CRGB *t_leds, Origin t_o=ORIGIN_NW, Wrap t_wr=WRAP_H, int t_s=0);
 
     //Accessors:
-     getWidth();
-     getHeight();
+    int getWidth();
+    int getHeight();
     int getSize();
     CRGB* getLEDs();
     CRGB* getBuffer();
     BMP* getBitmap();
-    CRGB getPoint( t_x,  t_y);
+    CRGB getPoint(int t_x, int t_y);
     
     //Utilities
-     inboundsX( t_x);
-     inboundsY( t_y);
-     inbounds( t_x,  t_y);
+    int inboundsX(int t_x);
+    int inboundsY(int t_y);
+    int inbounds(int t_x, int t_y);
     void printCanvas(); //Prints contents of canvas using Serial.println()
 
     //Helpers:
     int toIndex(int t_x, int t_y); //Converts X-Y coords to corresponding array index
-     toXY(int t_i); //Converts given index to X-Y coords.
+    int toXY(int t_i); //Converts given index to X-Y coords.
     int remapIndex(int t_i); //Remaps index to fit the assigned layout of LEDS and returns index i
     int remapXY(int t_x, int t_y); //Remaps coordinates to fit the assigned layout of LEDs and returns index i
     
     //Draw Functions:
-    void drawPoint( x,  y, CRGB t_color,  t_a);
-    void drawRect( x,  y,  dx,  dy, CRGB t_color);
-    void drawLine( x,  y,  x2,  y2, CRGB t_color);
+    void drawPoint(int x, int y, CRGB t_color, int t_a);
+    void drawRect(int x, int y, int dx, int dy, CRGB t_color);
+    void drawLine(int x, int y, int x2, int y2, CRGB t_color);
     
     //TODO: Replace drawSprite series with drawBMP, make size scalable
-    void drawSprite( x,  y,  s_x,  s_y,  *sprite, CRGB *palette);
-    void drawSprite8( x,  y,  s_x,  s_y,  *sprite, CRGB t_color);
-    void drawSprite16( x,  y,  s_x,  s_y, uint16_t *sprite, CRGB t_color);
-    void drawSprite32( x,  y,  s_x,  s_y, uint32_t *sprite, CRGB t_color);
+    void drawSprite(int x, int y, int s_x, int s_y, int *sprite, CRGB *palette);
+    void drawSprite8(int x, int y, int s_x, int s_y, int *sprite, CRGB t_color);
+    void drawSprite16(int x, int y, int s_x, int s_y, uint16_t *sprite, CRGB t_color);
+    void drawSprite32(int x, int y, int s_x, int s_y, uint32_t *sprite, CRGB t_color);
     
-    void drawChar(char character,  x,  y, CRGB t_color);
-    void drawString(char str[],  x,  y, CRGB t_color);
+    void drawChar(char character, int x, int y, CRGB t_color);
+    void drawString(char str[], int x, int y, CRGB t_color);
 
     //BMP Functions
     void newBitmap();
@@ -68,20 +68,20 @@ class Canvas
     void drawObj(Drawable *t_d); //Calls draw() for the specified object
 
     //Effects:
-    void linearFade( amount); //Fades out every LED by a certain amount
+    void linearFade(int amount); //Fades out every LED by a certain amount
     void linearFade(Drawable Mask); //TODO: maybe get id of this and use default arguments instead
     void erase(); //Clears entire canvas
-    void eraseArea( x,  y,  dx,  dy, CRGB t_color); //Clears canvas in rectangular area
+    void eraseArea(int x, int y, int dx, int dy, CRGB t_color); //Clears canvas in rectangular area
 
     //Update
     void update(); //Copy (and translate) the buffer array to the main array used by FastLED
 
   protected:
-     width;
-     height;
-     origin; //Denotes starting point of matrix
-     wrap; //Denotes wrap direction (horizontal or vertical)
-     snake; //Denotes whether row directions alternate or stay the same
+    int width;
+    int height;
+    int origin; //Denotes starting point of matrix
+    int wrap; //Denotes wrap direction (horizontal or vertical)
+    int snake; //Denotes whether row directions alternate or stay the same
     static word font[];
     CRGB* leds; //TODO: Should the leds operate using RGB or HSV? Note: HSV can convert to RGB but not vice-versa, but HSV is better for color math (how expenive is constant conversion? and is there a loss in coplor quality?)
     CRGB* leds_buffer;
