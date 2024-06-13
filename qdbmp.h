@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef _BMP_H_
 #define _BMP_H_
 
@@ -131,3 +135,8 @@ const char*		BMP_GetErrorDescription		();
 	}																				\
 
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /* Bitmap header */
 typedef struct _BMP_Header
 {
