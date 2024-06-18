@@ -1,6 +1,5 @@
-#include "qdbmp.h"
-
 #pragma once
+#include "qdbmp.h"
 #include <Arduino.h>
 #include <FastLED.h>
 class Drawable;
@@ -88,7 +87,7 @@ class Canvas
     int snake; //Denotes whether row directions alternate or remain the same
 
     static word font[];
-    CRGB* leds; //TODO: Should the leds operate using RGB or HSV? Note: HSV can convert to RGB but not vice-versa, but HSV is better for color math (how expenive is constant conversion? and is there a loss in coplor quality?)
+    CRGB* leds;
     CRGB* leds_buffer;
     BMP* bmp;
 };
