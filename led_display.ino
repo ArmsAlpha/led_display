@@ -14,7 +14,7 @@
 #include <Adafruit_GFX.h>
 #include "led_canvas.h"
 #include "led_drawables.h"
-#include "sprites.h"
+
 
 #define FRAME_TIME_MILLIS 100 //Duration of a single frame in millis
 //LED-related defines
@@ -41,7 +41,7 @@ uint8_t i = 0;
 
 //listen(): Check for new inputs, called every frame. Returns a value based on input
 uint8_t listen(){
-  
+  return 0;
 }
 
 // changeMode(): Change current screen mode
@@ -94,18 +94,17 @@ void loop() {
   switch(mode){
     case 0: //Off - Don't do anything
 
-    canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(255,255,255),0);
-    canvas.update();
-    FastLED.show();
-    canvas.drawPoint();
-    i = (i+1)%NUM_LEDS;
+      canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(255,255,255),0);
+      canvas.update();
+      FastLED.show();
+      canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(0,0,0),0);
+      i = (i+1)%NUM_LEDS;
 
       break;
+
     case 1: //Power on/off - play a little animation when turning the monitor on/off
-
-  }
-    
       break;
+
     case 2: //Face
       /*IDEAS:
        - Have eyes blink at semi-random intervals (chance to blink after x seconds, force blink after x+y seconds)
