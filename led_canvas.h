@@ -51,12 +51,6 @@ class Canvas
     void drawRect(int x, int y, int dx, int dy, CRGB t_color);
     void drawLine(int x, int y, int x2, int y2, CRGB t_color);
     
-    //TODO: Replace drawSprite series with drawBMP, make size scalable
-    void drawSprite(int x, int y, int s_x, int s_y, int *sprite, CRGB *palette);
-    void drawSprite8(int x, int y, int s_x, int s_y, uint8_t *sprite, CRGB t_color);
-    void drawSprite16(int x, int y, int s_x, int s_y, uint16_t *sprite, CRGB t_color);
-    void drawSprite32(int x, int y, int s_x, int s_y, uint32_t *sprite, CRGB t_color);
-    
     void drawChar(char character, int x, int y, CRGB t_color);
     void drawString(char str[], int x, int y, CRGB t_color);
 

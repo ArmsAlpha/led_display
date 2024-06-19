@@ -144,51 +144,6 @@
     
   }
   
-  void Canvas::drawSprite8(int x, int y, int s_x, int s_y, uint8_t *sprite, CRGB t_color){
-    int row;
-    for(int i=0; i<s_y && i<8; i++){
-      if((y+i) >= getHeight()) break;
-      row=sprite[i];
-      for(int j=0; j<s_x && j<8; j++){
-        if((x+j) >= getWidth()) break;
-        if((row & 0b10000000) && inbounds(x+j, y+i)){ //Write current bit if it's a 1 and within the screen
-          drawPoint(x+j,y+i,t_color, 0);
-        }
-        row = row << 1;
-      }
-    }
-  }
-  
-  void Canvas::drawSprite16(int x, int y, int s_x, int s_y, uint16_t *sprite, CRGB t_color){
-    uint16_t row;
-    for(int i=0; i<s_y && i<16; i++){
-      if((y+i) >= getHeight()) break;
-      row=sprite[i];
-      for(int j=0; j<s_x && j<16; j++){
-        if((x+j) >= getWidth()) break;
-        if((row & bit(15)) && inbounds(x+j, y+i)){ //Write current bit if it's a 1 and within the screen
-          drawPoint(x+j,y+i,t_color, 0);
-        }
-        row = row << 1;
-      }
-    }
-  }
-  
-  void Canvas::drawSprite32(int x, int y, int s_x, int s_y, uint32_t *sprite, CRGB t_color){
-    uint32_t row;
-    for(int i=0; i<s_y && i<32; i++){
-      if((y+i) >= getHeight()) break;
-      row=sprite[i];
-      for(int j=0; j<s_x && j<32; j++){
-        if((x+j) >= getWidth()) break;
-        if((row & bit(31-12)) && inbounds(x+j, y+i)){ //Write current bit if it's a 1 and within the screen
-          drawPoint(x+j,y+i,t_color, 0);
-        }
-        row = row << 1;
-      }
-    }
-  }
-  
   void Canvas::drawChar(char character, int x, int y, CRGB t_color){
     if (character > 96) { // convert lowercase to uppercase
       character -= 32;
