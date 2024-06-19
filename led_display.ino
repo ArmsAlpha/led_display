@@ -34,6 +34,8 @@ Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1
 
 uint8_t mode = 0; //Keeps track of current display mode
 unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
+uint8_t i = 0;
+
 
 //-------------FUNCTIONS-------------
 
@@ -61,6 +63,7 @@ void shiftup(int num_lines){
     }
   }
 }
+
 
 //------------ANIMATIONS------------
 //scrolls a string from right to left
@@ -90,7 +93,13 @@ void loop() {
 
   switch(mode){
     case 0: //Off - Don't do anything
-    
+
+    canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(255,255,255),0);
+    canvas.update();
+    FastLED.show();
+    canvas.drawPoint();
+    i = (i+1)%NUM_LEDS;
+
       break;
     case 1: //Power on/off - play a little animation when turning the monitor on/off
 
