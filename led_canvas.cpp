@@ -211,6 +211,10 @@ void Canvas::blitBitmap(int i0, int x0, int y0, int dx, int dy) {
   //TODO
 }
 
+void Canvas::renderBmp(const char* filename){
+  bmp = BMP_ReadFile(filename);
+}
+
 void Canvas::renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB crgb) {
 	int byteWidth = w/8;
 	for (int i=0; i<h; i++) {

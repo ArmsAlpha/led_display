@@ -87,6 +87,11 @@ void setup() {
   FastLED.show();
   //init pins
   pinMode(LED_PIN, OUTPUT);
+
+      canvas.renderBmp("testimg.bmp");
+      canvas.blitBmp(0,0,0,7,7); //TODO: Need to implement
+      canvas.update();
+      FastLED.show();
 }
 
 //-------------LOOP-------------
@@ -96,7 +101,7 @@ void loop() {
 
   switch(mode){
     case 0: //Off - Don't do anything
-
+      /*
       canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(255,255,255),0);
       canvas.update();
       FastLED.show();
@@ -104,7 +109,7 @@ void loop() {
       i = (i+1)%NUM_LEDS;
       canvas.drawPoint(0,0,CRGB(0,255,0),0);
       canvas.drawPoint(19,14,CRGB(255,0,0),0);
-
+      */
       break;
 
     case 1: //Power on/off - play a little animation when turning the monitor on/off

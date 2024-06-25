@@ -57,8 +57,9 @@ class Canvas
     //BMP Functions
     void newBitmap();
     void fillBitmap(unsigned int x0, unsigned int y0, unsigned int dx, unsigned int dy, CRGB crgb);
-    void blitBitmap(int i0, int x0, int y0, int dx, int dy);
-    void renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB crgb); //Render bmp at coordinates
+    void blitBitmap(int i0, int x0, int y0, int dx, int dy); //Blit section of bmp array onto leds buffer
+    void renderBmp(const char* filename);
+    void renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB crgb); //Render Xpm onto bmp array
 
     void drawObj(Drawable *t_d); //Calls draw() for the specified object
 
