@@ -34,7 +34,7 @@ Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1
 
 uint8_t mode = 0; //Keeps track of current display mode
 unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
-uint8_t i = 0;
+int i = 0;
 
 
 //-------------FUNCTIONS-------------
@@ -46,7 +46,7 @@ uint8_t listen(){
 
 // changeMode(): Change current screen mode
 void changeMode(uint8_t t_mode){
-  
+  mode = t_mode;
 }
 
 // inRange(): returns whether or not x is between low and high
@@ -82,6 +82,9 @@ void setup() {
   //init leds
   FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
+  canvas.erase();
+  canvas.update();
+  FastLED.show();
   //init pins
   pinMode(LED_PIN, OUTPUT);
 }
@@ -99,6 +102,8 @@ void loop() {
       FastLED.show();
       canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(0,0,0),0);
       i = (i+1)%NUM_LEDS;
+      canvas.drawPoint(0,0,CRGB(0,255,0),0);
+      canvas.drawPoint(19,14,CRGB(255,0,0),0);
 
       break;
 

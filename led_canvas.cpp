@@ -122,12 +122,10 @@
   
   //=========Drawing Functions=========
 
-
-  //TODO: Have drawPoint and other drawing functions effect the buffer, and don't remap indeces at draw time (remap when copying buffer)
   void Canvas::drawPoint(int x, int y, CRGB t_color, int t_a){
     //TODO: implement alpha blending
     //if(inbounds(x,y)) leds[remapXY(x,y)]=t_color;
-    if(inbounds(x,y)) leds_buffer[toIndex(x,y)]=t_color;
+    if(inbounds(x,y)&&t_color!=CRGB(255,0,255)) leds_buffer[toIndex(x,y)]=t_color;
   }
 
   void Canvas::drawRect(int x, int y, int dx, int dy, CRGB t_color){
@@ -237,14 +235,7 @@ void Canvas::renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, 
 
 
   void Canvas::update(){
-    /*
-    for(int i=0; i+=getHeight(); i++){
-      for(int j=0; j+=getWidth(); j++){
-        leds[remapXY(j,i)] = leds_buffer[toIndex(j,i)];
-      }
-    }
-    */
-    for(int i=0; i+=getSize(); i++){
+    for(int i=0; i<getSize(); i++){
       leds[remapIndex(i)] = leds_buffer[i];
     }
   }
