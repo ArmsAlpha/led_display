@@ -209,6 +209,15 @@ void Canvas::fillBitmap(unsigned int x0, unsigned int y0, unsigned int dx, unsig
 
 void Canvas::blitBitmap(int i0, int x0, int y0, int dx, int dy) {
   //TODO
+  byte r,g,b;
+  for (int i=0; i<dy; i++){
+    for (int j=0; j<dx; j++){
+      if(inbounds(j,i)){
+        BMP_GetPixelRGB(bmp,j,i,&r,&g,&b);
+        drawPoint(j,i,CRGB(r,g,b),0);
+      }
+    }
+  }
 }
 
 void Canvas::renderBmp(const char* filename){
