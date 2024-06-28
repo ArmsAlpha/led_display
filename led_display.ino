@@ -87,11 +87,6 @@ void setup() {
   FastLED.show();
   //init pins
   pinMode(LED_PIN, OUTPUT);
-
-      canvas.renderBmp("testimg.bmp");
-      canvas.blitBitmap(0,0,0,8,8); //TODO: Need to implement
-      canvas.update();
-      FastLED.show();
 }
 
 //-------------LOOP-------------

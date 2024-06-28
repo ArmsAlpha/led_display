@@ -54,6 +54,8 @@ class Canvas
     void drawChar(char character, int x, int y, CRGB t_color);
     void drawString(char str[], int x, int y, CRGB t_color);
 
+    void drawSprite(int x, int y, int w, int h, unsigned char * charBytes, CRGB t_color);
+
     //BMP Functions
     void newBitmap();
     void fillBitmap(unsigned int x0, unsigned int y0, unsigned int dx, unsigned int dy, CRGB crgb);
