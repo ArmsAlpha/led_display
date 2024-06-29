@@ -185,8 +185,19 @@
     while ((chr != 0) and (sumX < getWidth()));
     }
 
-    void Canvas::drawSprite(int x, int y, int w, int h, unsigned char * charBytes, CRGB t_color){
-      
+    void Canvas::drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color){
+      int byteWidth = w/8;
+	    for (int i=0; i<h; i++) {
+		    int y=y0+i;
+		    for (int j=0; j<byteWidth; j++) {
+			    unsigned char bits = charBytes[i*byteWidth+j];
+		      int byteX = x0+j*8;
+		      for (int k=0; k<8; k++) {
+			      if (bits & (1 << k)) BMP_SetPixelRGB(bmp, byteX+k, y, crgb.r, crgb.g, crgb.b);
+            drawPoint(byteX+k, y, t_color, 0);
+			      }
+		      }
+	    }
     }
 
   void Canvas::linearFade(int amount){
