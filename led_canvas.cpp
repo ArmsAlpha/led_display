@@ -15,8 +15,6 @@
     snake = t_s;
     leds = t_leds;
     leds_buffer = new CRGB[t_x*t_y];
-    bmp = NULL;
-    newBitmap();
   }
 
   //===Accessors===
@@ -36,10 +34,6 @@
 
   CRGB* Canvas::getBuffer(){
     return leds_buffer;
-  }
-
-  BMP* Canvas::getBitmap(){
-    return bmp;
   }
 
   CRGB Canvas::getPoint(int t_x, int t_y){
@@ -185,50 +179,7 @@
     while ((chr != 0) and (sumX < getWidth()));
     }
 
-    void Canvas::drawSprite(int x, int y, int w, int h, unsigned char * charBytes, CRGB t_color){
-      
-    }
-
-  void Canvas::linearFade(int amount){
-    for(int i=0; i<getSize(); i++){
-      leds_buffer[i].subtractFromRGB(amount);
-    }
-  }
-  
-  //=========Bitmap Functions=========
-
-void Canvas::newBitmap() {
-	if (bmp != NULL)
-		BMP_Free(bmp);
-	bmp = BMP_Create(width, height, 24);
-	if (bmp == NULL)
-		Serial.println("Display bitmap allocation failed");
-}
-
-void Canvas::fillBitmap(unsigned int x0, unsigned int y0, unsigned int dx, unsigned int dy, CRGB crgb) {
-	for (unsigned int x=x0; x<x0+dx; x++)
-		for (unsigned int y=y0; y<y0+dy; y++)
-			BMP_SetPixelRGB(bmp, x, y, crgb.r, crgb.g, crgb.b);
-}
-
-void Canvas::blitBitmap(int i0, int x0, int y0, int dx, int dy) {
-  //TODO
-  byte r,g,b;
-  for (int i=0; i<dy; i++){
-    for (int j=0; j<dx; j++){
-      if(inbounds(j,i)){
-        BMP_GetPixelRGB(bmp,j,i,&r,&g,&b);
-        drawPoint(j,i,CRGB(r,g,b),0);
-      }
-    }
-  }
-}
-
-void Canvas::renderBmp(const char* filename){
-  bmp = BMP_ReadFile(filename);
-}
-
-void Canvas::renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB crgb) {
+  void Canvas::drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color) {
 	int byteWidth = w/8;
 	for (int i=0; i<h; i++) {
 		int y=y0+i;
@@ -236,13 +187,19 @@ void Canvas::renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, 
 			unsigned char bits = charBytes[i*byteWidth+j];
 			int byteX = x0+j*8;
 			for (int k=0; k<8; k++) {
-				if (bits & (1 << k))
-					BMP_SetPixelRGB(bmp, byteX+k, y, crgb.r, crgb.g, crgb.b);
+				if (bits & (1 << k)) drawPoint(byteX+k, y,t_color,0);
+					//BMP_SetPixelRGB(bmp, byteX+k, y, crgb.r, crgb.g, crgb.b);
 			}
 		}
 	}
 }
 
+  void Canvas::linearFade(int amount){
+    for(int i=0; i<getSize(); i++){
+      leds_buffer[i].subtractFromRGB(amount);
+    }
+  }
+  
 void Canvas::erase(){
   for(int i=0; i<getSize(); i++){
     leds_buffer[i]=CRGB(0,0,0);

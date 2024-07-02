@@ -31,7 +31,6 @@ class Canvas
     int getSize();
     CRGB* getLEDs();
     CRGB* getBuffer();
-    BMP* getBitmap();
     CRGB getPoint(int t_x, int t_y);
     
     //Utilities
@@ -54,13 +53,9 @@ class Canvas
     void drawChar(char character, int x, int y, CRGB t_color);
     void drawString(char str[], int x, int y, CRGB t_color);
 
-    void drawSprite(int x, int y, int w, int h, unsigned char * charBytes, CRGB t_color);
+    void drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color);
 
     //BMP Functions
-    void newBitmap();
-    void fillBitmap(unsigned int x0, unsigned int y0, unsigned int dx, unsigned int dy, CRGB crgb);
-    void blitBitmap(int i0, int x0, int y0, int dx, int dy); //Blit section of bmp array onto leds buffer
-    void renderBmp(const char* filename);
     void renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB crgb); //Render Xpm onto bmp array
 
     void drawObj(Drawable *t_d); //Calls draw() for the specified object
@@ -87,5 +82,4 @@ class Canvas
     static word font[];
     CRGB* leds; //TODO: Should the leds operate using RGB or HSV? Note: HSV can convert to RGB but not vice-versa, but HSV is better for color math (how expenive is constant conversion? and is there a loss in coplor quality?)
     CRGB* leds_buffer;
-    BMP* bmp;
 };
