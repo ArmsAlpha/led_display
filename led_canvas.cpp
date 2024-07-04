@@ -200,17 +200,17 @@
     }
   }
   
-void Canvas::erase(){
-  for(int i=0; i<getSize(); i++){
-    leds_buffer[i]=CRGB(0,0,0);
+  void Canvas::erase(){
+    for(int i=0; i<getSize(); i++){
+      leds_buffer[i]=CRGB(0,0,0);
+    }
   }
-}
 
-void Canvas::update(){
-  for(int i=0; i<getSize(); i++){
-    leds[remapIndex(i)] = leds_buffer[i];
+  void Canvas::update(){
+    for(int i=0; i<getSize(); i++){
+      leds[remapIndex(i)] = leds_buffer[i];
+    }
   }
-}
 
 //==Constants==
 /*int Canvas::NW = 0;

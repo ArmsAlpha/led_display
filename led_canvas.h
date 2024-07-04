@@ -1,5 +1,3 @@
-#include "qdbmp.h"
-
 #pragma once
 #include <Arduino.h>
 #include <FastLED.h>
