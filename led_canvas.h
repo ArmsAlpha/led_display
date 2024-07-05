@@ -20,7 +20,7 @@ class Canvas
     };
 
     //Constructors:
-    Canvas(int t_x, int t_y, CRGB *t_leds, Origin t_o=ORIGIN_NW, Wrap t_wr=WRAP_H, int t_s=0);
+    Canvas(int t_x, int t_y, CRGB *t_leds, CRGB* t_buffer, Origin t_o=ORIGIN_NW, Wrap t_wr=WRAP_H, int t_s=0);
 
     //Accessors:
     int getWidth();
@@ -46,7 +46,7 @@ class Canvas
 
   private:
 
-    void init(int t_x, int t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, int t_s);
+    void init(int t_x, int t_y, CRGB *t_leds, CRGB *t_buffer, Origin t_o, Wrap t_wr, int t_s);
 
     int width;
     int height;

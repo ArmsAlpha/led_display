@@ -3,18 +3,18 @@
 //---CLASS CANVAS:
 
   //===Constructors===
-  Canvas::Canvas(int t_x, int t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, int t_s){
-    this->init(t_x, t_y, t_leds, t_o, t_wr, t_s);
+  Canvas::Canvas(int t_x, int t_y, CRGB *t_leds, CRGB *t_buffer, Origin t_o, Wrap t_wr, int t_s){
+    this->init(t_x, t_y, t_leds, t_buffer, t_o, t_wr, t_s);
   }
 
-  void Canvas::init(int t_x, int t_y, CRGB *t_leds, Origin t_o, Wrap t_wr, int t_s){
+  void Canvas::init(int t_x, int t_y, CRGB *t_leds, CRGB *t_buffer, Origin t_o, Wrap t_wr, int t_s){
     width = t_x;
     height = t_y;
     origin = t_o;
     wrap = t_wr;
     snake = t_s;
     leds = t_leds;
-    leds_buffer = new CRGB[t_x*t_y];
+    leds_buffer = t_buffer;
   }
 
   //===Accessors===

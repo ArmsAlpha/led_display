@@ -32,7 +32,7 @@
 
 CRGB leds[NUM_LEDS];
 CRGB leds_buffer[NUM_LEDS];
-Canvas ch(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1);
+Canvas ch(NUM_LEDS_X, NUM_LEDS_Y, leds, leds_buffer, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1);
 ledGraphics ledcanvas(leds_buffer, NUM_LEDS_X, NUM_LEDS_Y);
 
 uint8_t mode = 0; //Keeps track of current display mode
