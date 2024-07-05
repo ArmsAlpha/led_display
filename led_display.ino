@@ -13,7 +13,8 @@
 #include <FastLED.h>
 #include <Adafruit_GFX.h>
 #include "led_canvas.h"
-#include "led_drawables.h"
+//#include "led_drawables.h"
+#include "led_graphics.h"
 
 
 #define FRAME_TIME_MILLIS 100 //Duration of a single frame in millis
@@ -30,7 +31,9 @@
 #define BUTTON_POWER 4
 
 CRGB leds[NUM_LEDS];
-Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1);
+CRGB leds_buffer[NUM_LEDS];
+Canvas ch(NUM_LEDS_X, NUM_LEDS_Y, leds, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1);
+ledGraphics ledcanvas(leds_buffer, NUM_LEDS_X, NUM_LEDS_Y);
 
 uint8_t mode = 0; //Keeps track of current display mode
 unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
@@ -57,9 +60,9 @@ uint8_t inRange(float low, float high, float x)
 
 //shiftup(): Shifts the contents of the canvas up by the number of lines specified
 void shiftup(int num_lines){
-  for(int i=0; i>canvas.getHeight(); i++){
-    for(int j=0; j>canvas.getWidth(); j++){     
-      if(i-num_lines>=0) canvas.drawPoint(j,i-num_lines,canvas.getPoint(j,i),0);
+  for(int i=0; i>ch.getHeight(); i++){
+    for(int j=0; j>ch.getWidth(); j++){     
+      if(i-num_lines>=0) ledcanvas.drawPoint(j,i-num_lines,ch.getPoint(j,i),0);
     }
   }
 }
@@ -82,8 +85,8 @@ void setup() {
   //init leds
   FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
-  canvas.erase();
-  canvas.update();
+  ledcanvas.erase();
+  ch.update();
   FastLED.show();
   //init pins
   pinMode(LED_PIN, OUTPUT);
