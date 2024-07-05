@@ -28,3 +28,29 @@ do I need a whole class for led_canvas? other idea: make remapIndex (and related
 ^^maybe name it something like "canvashelper"? have it store the info for the matrix (size, orientation, wrap, etc.) and provide functionalities such as converting between index/xy, translating between normal and formatted matrix, whether or not a point is inbounds
 
 are normal graphics libraries lightweight enough for arduino?
+
+
+
+
+PROPOSED SOLUTION 1: CLASSLESS
+- Store all relevant translation information as #define imperatives (width, height, origin, wrap, snake)
+- Store leds_buffer[] in main along with leds[]
+- Move helper functions to main (inbounds, toIndex/toXY, remapIndex/remapXY)
+- Store all drawing functions in separate Graphics class which can either have its own array or use a pointer to an existing array. only info that would have to be stored again in graphics class would be width and height
+Possible Problems
+- Accessability - how easy would it be to access and use the helper functions/buffer from another class or file (such as using a separate file for each animation)?
+- Neatness - Having all the helper functions for copying from the buffer would be nice to have in their own class to help prevent confusion and cluttering up main
+
+PROPOSED SOLUTION 2: HELPER CLASS
+- Store all relevant translation information within a helper class (width, height, origin, wrap, snake)
+- Store leds_buffer[] in main along with leds[] and store a pointer to it in the helper class
+- Allow access to leds_buffer and associated information through the use of accessor methods
+- Store all drawing functions in separate Graphics class which can either have its own array or use a pointer to an existing array. only info that would have to be stored again in graphics class would be width and height
+Possible Problems
+- Size: Does creating an instance of a helper class with extra variables and stuff take up space when it doesn't need to? Also does having a separate file for the class clutter the project more than it needs to be?
+- Repetition: Size (total, x, y) is already defined through preprocessing directives, is storing it in the class again a bad idea?
+
+Things to keep in mind when choosing:
+- How easy is it to integrate a 3rd party graphics library using one approach vs the other?
+- Which would be easier to work with as a developer?
+- Which would provide better efficiency with the hardware?
