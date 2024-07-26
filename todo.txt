@@ -2,6 +2,8 @@ TODO LIST:
 - update formatting to match that of adafruit gfx library
 - add a proper readme
 - add define guards to .h files
+- function for drawing sprites
+- ability to draw rotated sprites
 
 ______________________
 
@@ -101,3 +103,7 @@ research event listeners
 idea for graphics structure:
 canvas class -> graphics class which stores a reference/pointer to the canvas class -> graphics class inherits from ada_gfx
 should the buffer be stored in the canvas class? or should the canvas class store a pointer to a buffer defined elsewhere?
+
+MODES vs ANIMATIONS
+MODES: emoticons, eyeball, flowey, 8ball, etc. changes when you press channel up or down. Determines what animations are played.
+ANIMATIONS: can play and render concurrently. 

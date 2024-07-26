@@ -98,20 +98,42 @@
     while ((chr != 0) and (sumX < canvas->getWidth()));
     }
 
-    void ledGraphics::drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color){
-      int byteWidth = w/8;
-	    for (int i=0; i<h; i++) {
-		    int y=y0+i;
-		    for (int j=0; j<byteWidth; j++) {
-			    unsigned char bits = charBytes[i*byteWidth+j];
-		      int byteX = x0+j*8;
-		      for (int k=0; k<8; k++) {
-			      if (bits & (1 << k))
-              drawPixel(byteX+k, y, t_color, 0);
-			      }
-		      }
+  void ledGraphics::drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color){
+    int byteWidth = w/8;
+	  for (int i=0; i<h; i++) {
+		  int y=y0+i;
+		  for (int j=0; j<byteWidth; j++) {
+			  unsigned char bits = charBytes[i*byteWidth+j];
+		    int byteX = x0+j*8;
+		    for (int k=0; k<8; k++) {
+			    if (bits & (1 << k))
+            drawPixel(byteX+k, y, t_color, 0);
+		    }
 	    }
+	  }
+  }
+
+/*
+  void ledGraphics::drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[],
+                              int16_t w, int16_t h, uint16_t color) {
+
+  int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
+  uint8_t b = 0;
+
+  startWrite();
+  for (int16_t j = 0; j < h; j++, y++) {
+    for (int16_t i = 0; i < w; i++) {
+      if (i & 7)
+        b <<= 1;
+      else
+        b = pgm_read_byte(&bitmap[j * byteWidth + i / 8]);
+      if (b & 0x80)
+        writePixel(x + i, y, color);
     }
+  }
+  endWrite();
+}
+*/
 
   void ledGraphics::linearFade(int amount){
     for(int i=0; i<canvas->getSize(); i++){

@@ -28,10 +28,12 @@ class ledGraphics
     void drawString(char str[], int x, int y, CRGB t_color);
     void drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color);
 
-    //BMP Functions
-    void renderXpm(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB crgb); //Render Xpm onto bmp array
+    /*
+    //Adafruit_GFX drawBitmap - still trying to wrap head around implementation
+    void drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w, int16_t h, uint16_t color);
+    */
 
-   // void drawObj(Drawable *t_d); //Calls draw() for the specified object
+    //void drawObj(Drawable *t_d); //Calls draw() for the specified object
 
     //Effects:
     void linearFade(int amount); //Fades out every LED by a certain amount
