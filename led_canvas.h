@@ -1,4 +1,8 @@
 #pragma once
+
+#ifndef LED_CANVAS_H_
+#define LED_CANVAS_H_
+
 #include <Arduino.h>
 #include <FastLED.h>
 //class Drawable;
@@ -13,7 +17,7 @@ class Canvas
       ORIGIN_SE
     };
 
-    //Vertical or Horizontal Weapping
+    //Vertical or Horizontal Wrapping
     enum Wrap{
       WRAP_H,
       WRAP_V
@@ -30,12 +34,11 @@ class Canvas
     CRGB* getBuffer();
     CRGB getPoint(int t_x, int t_y);
     
-    //Utilities
+    //Utilities and Helpers
     int inboundsX(int t_x);
     int inboundsY(int t_y);
     int inbounds(int t_x, int t_y);
 
-    //Helpers:
     int toIndex(int t_x, int t_y); //Converts X-Y coords to corresponding array index
     int toXY(int t_i); //Converts given index to X-Y coords.
     int remapIndex(int t_i); //Remaps index to fit the assigned layout of LEDS and returns index i
@@ -43,6 +46,9 @@ class Canvas
 
     //Update
     void update(); //Copy (and translate) the buffer array to the main array used by FastLED
+
+    //Graphics
+    void drawPixel(int x, int y, CRGB t_color, int t_a=0);;
 
   private:
 
@@ -54,7 +60,8 @@ class Canvas
     int wrap; //Denotes wrap direction (horizontal or vertical)
     int snake; //Denotes whether row directions alternate or remain the same
 
-    static word font[];
     CRGB* leds;
     CRGB* leds_buffer;
 };
+
+#endif

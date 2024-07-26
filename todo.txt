@@ -1,27 +1,13 @@
-implement bitmap drawing, give led_canvas a bmp member to act as an extra buffer for bmp manipulation
-depreciate remapXY and move all logic to update(), or have update() use separate logic which doesn't require xy values
-	^^alternatively, introduce a remapIndex function which does the same thing but using a single input
-	^^ which one will contain the logic? either have remapIndex call remapXY or have remapXY call remapIndex
+TODO LIST:
+- update formatting to match that of adafruit gfx library
+- add a proper readme
+- add define guards to .h files
 
-update formatting to match that of adafruit gfx library
-
-add a proper readme
-
-bitmap stuff:
-
-fillbitmap() -> fils bitmap with solid color (really just draws a rectangle at point
-renderxpm() -> renders bitmap image to the bitmap array
-displayBitmap() -> copies bitmap to led array
-		|-> just calls blitBitmap() but for each panel (my code doesn't use multiple panels so just use blitBitmap instead)
+______________________
 
 
-can't store .bmp images in memory, need to use an SD card??? (which I can't do on the playground express?)
-might have to get around this by converting .bmp to .xbm to load as code, then manually fill the bmp array
-
-is there a reason (other than potential use with SD card) to use QDBMP? seems like qdbmp isn't needed to read XBPs
 
 
-delete all bitmap support to make it more streamlined? maybe create a new branch just to save the code just in case
 
 do I need a whole class for led_canvas? other idea: make remapIndex (and related functions) its own set of functions, have leds[] and leds_buffer[] defined in main, only use new remapIndex class for translating between leds_buffer[] and leds[], make (or find) separate graphics library for performing operations on leds_buffer (should be easier since there's no funky translation needed for drawPoint anymore)
 
@@ -48,9 +34,70 @@ PROPOSED SOLUTION 2: HELPER CLASS
 - Store all drawing functions in separate Graphics class which can either have its own array or use a pointer to an existing array. only info that would have to be stored again in graphics class would be width and height
 Possible Problems
 - Size: Does creating an instance of a helper class with extra variables and stuff take up space when it doesn't need to? Also does having a separate file for the class clutter the project more than it needs to be?
-- Repetition: Size (total, x, y) is already defined through preprocessing directives, is storing it in the class again a bad idea?
+- Repetition: Size (total, x, y) is already defined through preprocessing directives, is storing it in the class again a bad idea? Also probably need to store size in the grpahics class too
 
 Things to keep in mind when choosing:
 - How easy is it to integrate a 3rd party graphics library using one approach vs the other?
 - Which would be easier to work with as a developer?
 - Which would provide better efficiency with the hardware?
+
+
+^^^after trying to implement it as a separate class, no real benefit from making the helpers a separate class and just makes things more cluttered
+
+KEEP IN MIND: can put functions in a separate file without needing to make it a new class
+
+listen() -> changes newMode variable to 1
+each animation checks if newMode is 0 or 1, if it's 0 then loop if it's 1 then call changeMode() (which changes mode and sets newMode to 0)
+
+^^potential problems: 
+- does this mess up frame timing with millis() since loop() doesn't reset after each frame?
+- would dead frame time need to be filled with a loop that repeatedly calls listen()? if so then that breaks FastLED 
+
+ways of storing animations:
+- case/switch in loop() which runs certain code/animations based on current mode variable value
+- each animation as its own function in a separate file
+- each animation as its own function, each with its own file
+>>for the above, is it possible to sequentially add files in a folder to an array then call the function that corresponds to the index?
+
+>>
+- have folder called 'animations'
+- have each animation function be in its own file in this folder
+- either at compile or run time, add functions to an array in alphabetical order
+- when choosing which animation to run, call anims[mode]()
+
+>>
+- have file called 'animations.ino'
+- have each animation be its own function
+
+
+
+
+should I include calls to draw graphics in the canvas class? maybe make it so all the drawing functions are defined in the canvas class but the implementation is reliant on outside libraries as opposed to having the logic hard-coded into the canvas class' functions
+
+^^if doing this, to what extent should the canvas class contain logic for drawing? should drawPoint() be defined and implemented while leaving more complex functions to be handled by an outside library? 
+
+
+MASKING: create a type 'mask' which can be several different things? i.e. sprite, rectangular area, circle, line, etc. maybe have each item of type mask have a check() function which checks if a given index is a 1 or a 0, implementation varies depending on what kind of mask it is
+
+STATIC VARIABLES KEEP THEIR VALUES THROUGHOUT DIFFERENT CALLS OF A FUNCTION
+STATIC CLASS VARIABLES ARE SHARED BETWEEN INSTANCES OF THE CLASS
+STATIC FUNCTIONS IN A CLASS CAN BE USED WITHOUT AN INSTANCE
+
+use init when functions in constructor can't guarantee success
+
+
+STUDY ADAFRUIT GFX LIBRARY AND SEE WHICH FUNCTIONS ARE VITUAL OR NOT
+
+seems like drawPixel is the only function that needs to be defined in led_canvas, everything else can work from having led_canvas inherit from adafruit_gfx
+
+how to have adagruit_gfx work with RGB colors instead of uint_16?
+
+
+have personal graphics library inherit from adafruit_gfx
+
+research event listeners
+
+
+idea for graphics structure:
+canvas class -> graphics class which stores a reference/pointer to the canvas class -> graphics class inherits from ada_gfx
+should the buffer be stored in the canvas class? or should the canvas class store a pointer to a buffer defined elsewhere?

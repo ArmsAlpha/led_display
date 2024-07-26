@@ -99,3 +99,10 @@
       leds[remapIndex(i)] = leds_buffer[i];
     }
   }
+
+  void Canvas::drawPixel(int x, int y, CRGB t_color, int t_a){
+    if(  (x>=0 && x<width)
+      && (y>=0 && y<height)
+      && (t_color!=CRGB(255,0,255)) )
+      leds_buffer[x+(width*y)] = t_color;
+  }

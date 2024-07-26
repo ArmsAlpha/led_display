@@ -1,17 +1,28 @@
 #pragma once
+
+#ifndef LED_GRAPHICS_H_
+#define LED_GRAPHICS_H_
+
 #include <Arduino.h>
 #include <FastLED.h>
+
+#include "led_canvas.h"
+
 //class Drawable;
 class ledGraphics
 {
   public:
     //Constructor:
-    ledGraphics(CRGB* t_canvas, int t_w, int t_h);
+    ledGraphics(Canvas* t_canvas);
 
     //Draw Functions:
-    void drawPoint(int x, int y, CRGB t_color, int t_a=0);
-    void drawRect(int x, int y, int dx, int dy, CRGB t_color);
+    void drawPixel(int x, int y, CRGB t_color, int t_a=0);
+    void drawVLine(int x, int y, int h, CRGB t_color);
+    void drawHLine(int x, int y, int w, CRGB t_color);
+    void fillRect(int x, int y, int dx, int dy, CRGB t_color);
+    void fillScreen(CRGB t_color);
     void drawLine(int x, int y, int x2, int y2, CRGB t_color);
+    void drawRect(int x, int y, int dx, int dy, CRGB t_color);
   
     void drawChar(char character, int x, int y, CRGB t_color);
     void drawString(char str[], int x, int y, CRGB t_color);
@@ -29,8 +40,8 @@ class ledGraphics
     void eraseArea(int x, int y, int dx, int dy, CRGB t_color); //Clears canvas in rectangular area
 
   private:
-    CRGB* canvas;
-    int width;
-    int height;
+    Canvas* canvas;
     static word font[];
 };
+
+#endif

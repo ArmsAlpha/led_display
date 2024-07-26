@@ -6,12 +6,11 @@
 //MASKING: allow sprites to be used for masking effects such as fade/color change
 //POSITIVE/NEGATIVE MASKING: Apply effects to the bits included in sprite mask, or all bits NOT covered by sprite mask
 //Possibly use fastLED's build-in palette framework for colors?
-//Alpha blending support
-//Support for loading sprites from .bmp
 
 #include <Adafruit_CircuitPlayground.h>
 #include <FastLED.h>
 #include <Adafruit_GFX.h>
+
 #include "led_canvas.h"
 //#include "led_drawables.h"
 #include "led_graphics.h"
@@ -32,8 +31,8 @@
 
 CRGB leds[NUM_LEDS];
 CRGB leds_buffer[NUM_LEDS];
-Canvas ch(NUM_LEDS_X, NUM_LEDS_Y, leds, leds_buffer, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1);
-ledGraphics ledcanvas(leds_buffer, NUM_LEDS_X, NUM_LEDS_Y);
+Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, leds_buffer, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1);
+ledGraphics graphics(&canvas);
 
 uint8_t mode = 0; //Keeps track of current display mode
 unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
@@ -41,6 +40,14 @@ int i = 0;
 
 
 //-------------FUNCTIONS-------------
+
+void update(){
+
+}
+
+
+
+
 
 //listen(): Check for new inputs, called every frame. Returns a value based on input
 uint8_t listen(){
@@ -60,9 +67,9 @@ uint8_t inRange(float low, float high, float x)
 
 //shiftup(): Shifts the contents of the canvas up by the number of lines specified
 void shiftup(int num_lines){
-  for(int i=0; i>ch.getHeight(); i++){
-    for(int j=0; j>ch.getWidth(); j++){     
-      if(i-num_lines>=0) ledcanvas.drawPoint(j,i-num_lines,ch.getPoint(j,i),0);
+  for(int i=0; i>canvas.getHeight(); i++){
+    for(int j=0; j>canvas.getWidth(); j++){     
+      if(i-num_lines>=0) graphics.drawPixel(j,i-num_lines,canvas.getPoint(j,i),0);
     }
   }
 }
@@ -85,8 +92,8 @@ void setup() {
   //init leds
   FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
-  ledcanvas.erase();
-  ch.update();
+  graphics.erase();
+  canvas.update();
   FastLED.show();
   //init pins
   pinMode(LED_PIN, OUTPUT);
@@ -154,7 +161,9 @@ void loop() {
   }
   listen();
   while(frametimer < FRAME_TIME_MILLIS){
-    //Kill time until the current frame is supposed to be over
+    //Listen for input and kill time until the current frame is supposed to be over
+    listen();
+    FastLED.show();
   }
   
 
