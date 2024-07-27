@@ -16,7 +16,7 @@ class ledGraphics
     ledGraphics(Canvas* t_canvas);
 
     //Draw Functions:
-    void drawPixel(int x, int y, CRGB t_color, int t_a=0);
+    void drawPixel(int x, int y, CRGB t_color, int t_a = 0);
     void drawVLine(int x, int y, int h, CRGB t_color);
     void drawHLine(int x, int y, int w, CRGB t_color);
     void fillRect(int x, int y, int dx, int dy, CRGB t_color);

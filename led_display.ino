@@ -12,9 +12,8 @@
 #include <Adafruit_GFX.h>
 
 #include "led_canvas.h"
-//#include "led_drawables.h"
 #include "led_graphics.h"
-
+//#include "led_drawables.h"
 
 #define FRAME_TIME_MILLIS 100 //Duration of a single frame in millis
 //LED-related defines
@@ -62,14 +61,14 @@ void changeMode(uint8_t t_mode){
 // inRange(): returns whether or not x is between low and high
 uint8_t inRange(float low, float high, float x)
 {
-    return ((x-high)*(x-low) <= 0);
+    return ((x - high) * (x - low) <= 0);
 }
 
 //shiftup(): Shifts the contents of the canvas up by the number of lines specified
 void shiftup(int num_lines){
-  for(int i=0; i>canvas.getHeight(); i++){
-    for(int j=0; j>canvas.getWidth(); j++){     
-      if(i-num_lines>=0) graphics.drawPixel(j,i-num_lines,canvas.getPoint(j,i),0);
+  for(int i = 0; i > canvas.getHeight(); i++){
+    for(int j = 0; j > canvas.getWidth(); j++){     
+      if(i - num_lines >= 0) graphics.drawPixel(j, i - num_lines, canvas.getPoint(j, i), 0);
     }
   }
 }
@@ -86,6 +85,7 @@ void marquee(char str[], int len, int y, CHSV color){
 void setup() {
   delay(4000);
   // put your setup code here, to run once:
+  //init board parameters
   CircuitPlayground.begin(50);
   CircuitPlayground.setAccelRange(LIS3DH_RANGE_2_G);
   Serial.begin(9600);
@@ -102,18 +102,18 @@ void setup() {
 //-------------LOOP-------------
 void loop() {
   // put your main code here, to run repeatedly:
-  frametimer=millis();
+  frametimer = millis();
 
   switch(mode){
     case 0: //Off - Don't do anything
       /*
-      canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(255,255,255),0);
+      graphics.drawPoint(i % NUM_LEDS_X, i / NUM_LEDS_X ,CRGB(255, 255, 255), 0);
       canvas.update();
       FastLED.show();
-      canvas.drawPoint(i%NUM_LEDS_X,i/NUM_LEDS_X,CRGB(0,0,0),0);
-      i = (i+1)%NUM_LEDS;
-      canvas.drawPoint(0,0,CRGB(0,255,0),0);
-      canvas.drawPoint(19,14,CRGB(255,0,0),0);
+      graphics.drawPoint(i % NUM_LEDS_X, i / NUM_LEDS_X, CRGB(0, 0, 0), 0);
+      i = (i + 1) % NUM_LEDS;
+      graphics.drawPoint(0, 0, CRGB(0, 255, 0), 0);
+      graphics.drawPoint(19, 14, CRGB(255, 0, 0), 0);
       */
       break;
 
@@ -159,8 +159,10 @@ void loop() {
       //!!!Have chance to draw chat reminder instead of message
       break;
   }
+
   listen();
-  while(frametimer < FRAME_TIME_MILLIS){
+
+  while(millis() - frametimer < FRAME_TIME_MILLIS){
     //Listen for input and kill time until the current frame is supposed to be over
     listen();
     FastLED.show();
