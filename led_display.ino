@@ -15,7 +15,7 @@
 #include "led_graphics.h"
 //#include "led_drawables.h"
 
-#define FRAME_TIME_MILLIS 100 //Duration of a single frame in millis
+#define FRAME_TIME_MILLIS 250 //Duration of a single frame in millis
 //LED-related defines
 #define NUM_LEDS 300
 #define NUM_LEDS_X 20
@@ -68,7 +68,7 @@ uint8_t inRange(float low, float high, float x)
 void shiftup(int num_lines){
   for(int i = 0; i > canvas.getHeight(); i++){
     for(int j = 0; j > canvas.getWidth(); j++){     
-      if(i - num_lines >= 0) graphics.drawPixel(j, i - num_lines, canvas.getPoint(j, i), 0);
+      if(i - num_lines >= 0) canvas.drawPixel(j, i - num_lines, canvas.getPoint(j, i), 0);
     }
   }
 }
@@ -92,11 +92,34 @@ void setup() {
   //init leds
   FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
-  graphics.erase();
-  canvas.update();
-  FastLED.show();
+  //graphics.erase();
+  //canvas.update();
+  //FastLED.show();
   //init pins
   pinMode(LED_PIN, OUTPUT);
+
+  //Test graphics
+  
+  //graphics.fillRect(1,1,8,5,CRGB(255,0,0));
+  //graphics.fillRect(4,5,3,6,CRGB(0,255,0));
+  graphics.drawRect(5,3,9,8,CRGB(0,0,255));
+  
+/*
+  graphics.drawVLine(5, 3, 8, CRGB(0,0,255));
+  graphics.drawVLine(5+8, 3, 8, CRGB(255,255,0));
+  graphics.drawHLine(5, 3, 9, CRGB(255,0,0));
+  graphics.drawHLine(5, 3+7, 9, CRGB(0,255,0));
+*/
+  /*
+  canvas.drawPixel(1,1,CRGB(255,0,0));
+  canvas.drawPixel(3,3,CRGB(0,255,0));
+  canvas.drawPixel(5,5,CRGB(0,0,255));
+  */
+
+  canvas.update();
+  FastLED.show();
+
+  delay(1);
 }
 
 //-------------LOOP-------------
@@ -158,15 +181,15 @@ void loop() {
 
       //!!!Have chance to draw chat reminder instead of message
       break;
-  }
+    }
 
-  listen();
-
+  //listen();
+  
   while(millis() - frametimer < FRAME_TIME_MILLIS){
     //Listen for input and kill time until the current frame is supposed to be over
     listen();
     FastLED.show();
+    delay(1);
   }
   
-
 }

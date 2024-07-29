@@ -14,7 +14,7 @@
 
   void ledGraphics::drawVLine(int x, int y, int h, CRGB t_color){
     if(canvas->inboundsX(x)){
-      for(int i = y; i < x + h; i++){
+      for(int i = y; i < y + h; i++){
         if(canvas->inboundsY(i)) drawPixel(x, i, t_color, 0);
       }
     }
@@ -40,15 +40,17 @@
 
   void ledGraphics::fillScreen(CRGB t_color){
     for(int i = 0; i < canvas->getSize(); i++){
-      drawPixel(i % canvas->getWidth(),i / canvas->getWidth(), t_color);
+      drawPixel(i % canvas->getWidth(), i / canvas->getWidth(), t_color);
     }
   }
 
   void ledGraphics::drawRect(int x, int y, int dx, int dy, CRGB t_color){
-    drawVLine(x, y, dy, t_color);
-    drawVLine(x + dx, y, dy, t_color);
-    drawHLine(x, y, dx, t_color);
-    drawHLine(x, y + dy, dx, t_color);
+    if(dx > 0 || dy > 0){
+      drawVLine(x, y, dy, t_color);
+      drawVLine(x + dx - 1, y, dy, t_color);
+      drawHLine(x, y, dx, t_color);
+      drawHLine(x, y + dy - 1, dx, t_color);
+    }
   }
   
   void ledGraphics::drawLine(int x, int y, int x2, int y2, CRGB t_color){
@@ -79,7 +81,7 @@
           continue;
         }
         if (bitRead(sprite, 15 - (j * 5 + i))) {
-          drawPixel(sumX,sumY,t_color);
+          drawPixel(sumX, sumY, t_color);
         }
       }
     }
