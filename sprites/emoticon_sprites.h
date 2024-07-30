@@ -1,3 +1,6 @@
+#ifndef EMOTICON_SPRITES_H_
+#define EMOTICON_SPRITES_H_
+
 //EYE SPRITES:
 //----------------------------------------------
 
@@ -35,8 +38,8 @@ const unsigned char epd_bitmap_mouth_o [] PROGMEM = {
 };
 
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 256)
-const int epd_bitmap_allArray_LEN = 8;
-const unsigned char* epd_bitmap_allArray[8] = {
+const int epd_bitmap_mouth_allArray_LEN = 8;
+const unsigned char* epd_bitmap_mouth_allArray[8] = {
 	epd_bitmap_mouth_3,
 	epd_bitmap_mouth_D,
 	epd_bitmap_mouth_I,
@@ -66,9 +69,11 @@ const unsigned char epd_bitmap_eyes_semicolon [] PROGMEM = {
 };
 
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 96)
-const int epd_bitmap_allArray_LEN = 3;
-const unsigned char* epd_bitmap_allArray[3] = {
+const int epd_bitmap_eyes_allArray_LEN = 3;
+const unsigned char* epd_bitmap_eyes_allArray[3] = {
 	epd_bitmap_eyes_bar,
 	epd_bitmap_eyes_colon,
 	epd_bitmap_eyes_semicolon
 };
+
+#endif

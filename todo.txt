@@ -7,9 +7,12 @@ TODO LIST:
 
 ______________________
 
+BUG LIST:
+- why are leds being drawn improperly when calling FastLed.show() without calling canvas.update()?????
+	- adding a delay fixes this, but not when using fastLED.delay() - might have something to do with calling function too quickly??? (fastLED.delay() repeatedly calls fastLED.show() while waiting)
+	- could also be related to calling fastLED.show() back-to-back?
 
-
-
+______________________
 
 do I need a whole class for led_canvas? other idea: make remapIndex (and related functions) its own set of functions, have leds[] and leds_buffer[] defined in main, only use new remapIndex class for translating between leds_buffer[] and leds[], make (or find) separate graphics library for performing operations on leds_buffer (should be easier since there's no funky translation needed for drawPoint anymore)
 

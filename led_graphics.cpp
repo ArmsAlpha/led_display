@@ -100,7 +100,7 @@
     while ((chr != 0) and (sumX < canvas->getWidth()));
     }
 
-  void ledGraphics::drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color){
+  void ledGraphics::drawSprite(int x0, int y0, int w, int h, const unsigned char * charBytes, CRGB t_color){
     int byteWidth = w / 8;
 	  for (int i = 0; i < h; i++) {
 		  int y = y0 + i;
@@ -108,7 +108,7 @@
 			  unsigned char bits = charBytes[i * byteWidth + j];
 		    int byteX = x0 + j * 8;
 		    for (int k = 0; k < 8; k++) {
-			    if (bits & (1 << k))
+			    if (bits & (128 >> k))
             drawPixel(byteX + k, y, t_color, 0);
 		    }
 	    }

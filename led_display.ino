@@ -13,6 +13,7 @@
 
 #include "led_canvas.h"
 #include "led_graphics.h"
+#include "sprites/emoticon_sprites.h"
 //#include "led_drawables.h"
 
 #define FRAME_TIME_MILLIS 250 //Duration of a single frame in millis
@@ -99,22 +100,8 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
 
   //Test graphics
-  
-  //graphics.fillRect(1,1,8,5,CRGB(255,0,0));
-  //graphics.fillRect(4,5,3,6,CRGB(0,255,0));
-  graphics.drawRect(5,3,9,8,CRGB(0,0,255));
-  
-/*
-  graphics.drawVLine(5, 3, 8, CRGB(0,0,255));
-  graphics.drawVLine(5+8, 3, 8, CRGB(255,255,0));
-  graphics.drawHLine(5, 3, 9, CRGB(255,0,0));
-  graphics.drawHLine(5, 3+7, 9, CRGB(0,255,0));
-*/
-  /*
-  canvas.drawPixel(1,1,CRGB(255,0,0));
-  canvas.drawPixel(3,3,CRGB(0,255,0));
-  canvas.drawPixel(5,5,CRGB(0,0,255));
-  */
+  graphics.drawSprite(2, 3, 8, 9, epd_bitmap_eyes_allArray[1], CRGB(255, 255, 255));
+  graphics.drawSprite(9, 3, 8, 9, epd_bitmap_mouth_allArray[1], CRGB(255, 255, 255));
 
   canvas.update();
   FastLED.show();

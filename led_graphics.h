@@ -26,7 +26,7 @@ class ledGraphics
   
     void drawChar(char character, int x, int y, CRGB t_color);
     void drawString(char str[], int x, int y, CRGB t_color);
-    void drawSprite(int x0, int y0, int w, int h, unsigned char * charBytes, CRGB t_color);
+    void drawSprite(int x0, int y0, int w, int h, const unsigned char * charBytes, CRGB t_color);
 
     /*
     //Adafruit_GFX drawBitmap - still trying to wrap head around implementation
