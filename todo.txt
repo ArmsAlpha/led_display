@@ -11,45 +11,10 @@ BUG LIST:
 - why are leds being drawn improperly when calling FastLed.show() without calling canvas.update()?????
 	- adding a delay fixes this, but not when using fastLED.delay() - might have something to do with calling function too quickly??? (fastLED.delay() repeatedly calls fastLED.show() while waiting)
 	- could also be related to calling fastLED.show() back-to-back?
+	- UPDATE: Definitely seems to be related to the data polling speed, although it seems like the speed should be correct (1ms), maybe try manually setting clock speed in constructor?
 
 ______________________
 
-do I need a whole class for led_canvas? other idea: make remapIndex (and related functions) its own set of functions, have leds[] and leds_buffer[] defined in main, only use new remapIndex class for translating between leds_buffer[] and leds[], make (or find) separate graphics library for performing operations on leds_buffer (should be easier since there's no funky translation needed for drawPoint anymore)
-
-^^maybe name it something like "canvashelper"? have it store the info for the matrix (size, orientation, wrap, etc.) and provide functionalities such as converting between index/xy, translating between normal and formatted matrix, whether or not a point is inbounds
-
-are normal graphics libraries lightweight enough for arduino?
-
-
-
-
-PROPOSED SOLUTION 1: CLASSLESS
-- Store all relevant translation information as #define imperatives (width, height, origin, wrap, snake)
-- Store leds_buffer[] in main along with leds[]
-- Move helper functions to main (inbounds, toIndex/toXY, remapIndex/remapXY)
-- Store all drawing functions in separate Graphics class which can either have its own array or use a pointer to an existing array. only info that would have to be stored again in graphics class would be width and height
-Possible Problems
-- Accessability - how easy would it be to access and use the helper functions/buffer from another class or file (such as using a separate file for each animation)?
-- Neatness - Having all the helper functions for copying from the buffer would be nice to have in their own class to help prevent confusion and cluttering up main
-
-PROPOSED SOLUTION 2: HELPER CLASS
-- Store all relevant translation information within a helper class (width, height, origin, wrap, snake)
-- Store leds_buffer[] in main along with leds[] and store a pointer to it in the helper class
-- Allow access to leds_buffer and associated information through the use of accessor methods
-- Store all drawing functions in separate Graphics class which can either have its own array or use a pointer to an existing array. only info that would have to be stored again in graphics class would be width and height
-Possible Problems
-- Size: Does creating an instance of a helper class with extra variables and stuff take up space when it doesn't need to? Also does having a separate file for the class clutter the project more than it needs to be?
-- Repetition: Size (total, x, y) is already defined through preprocessing directives, is storing it in the class again a bad idea? Also probably need to store size in the grpahics class too
-
-Things to keep in mind when choosing:
-- How easy is it to integrate a 3rd party graphics library using one approach vs the other?
-- Which would be easier to work with as a developer?
-- Which would provide better efficiency with the hardware?
-
-
-^^^after trying to implement it as a separate class, no real benefit from making the helpers a separate class and just makes things more cluttered
-
-KEEP IN MIND: can put functions in a separate file without needing to make it a new class
 
 listen() -> changes newMode variable to 1
 each animation checks if newMode is 0 or 1, if it's 0 then loop if it's 1 then call changeMode() (which changes mode and sets newMode to 0)
@@ -57,6 +22,7 @@ each animation checks if newMode is 0 or 1, if it's 0 then loop if it's 1 then c
 ^^potential problems: 
 - does this mess up frame timing with millis() since loop() doesn't reset after each frame?
 - would dead frame time need to be filled with a loop that repeatedly calls listen()? if so then that breaks FastLED 
+	-^^ no it doesn't, manually call FastLED.show() once per iteration since FastLED.delay() just calls show() every frame anyways
 
 ways of storing animations:
 - case/switch in loop() which runs certain code/animations based on current mode variable value
@@ -72,15 +38,7 @@ ways of storing animations:
 
 >>
 - have file called 'animations.ino'
-- have each animation be its own function
-
-
-
-
-should I include calls to draw graphics in the canvas class? maybe make it so all the drawing functions are defined in the canvas class but the implementation is reliant on outside libraries as opposed to having the logic hard-coded into the canvas class' functions
-
-^^if doing this, to what extent should the canvas class contain logic for drawing? should drawPoint() be defined and implemented while leaving more complex functions to be handled by an outside library? 
-
+- have each animation be its own function (or class)
 
 MASKING: create a type 'mask' which can be several different things? i.e. sprite, rectangular area, circle, line, etc. maybe have each item of type mask have a check() function which checks if a given index is a 1 or a 0, implementation varies depending on what kind of mask it is
 
@@ -90,23 +48,7 @@ STATIC FUNCTIONS IN A CLASS CAN BE USED WITHOUT AN INSTANCE
 
 use init when functions in constructor can't guarantee success
 
-
-STUDY ADAFRUIT GFX LIBRARY AND SEE WHICH FUNCTIONS ARE VITUAL OR NOT
-
-seems like drawPixel is the only function that needs to be defined in led_canvas, everything else can work from having led_canvas inherit from adafruit_gfx
-
-how to have adagruit_gfx work with RGB colors instead of uint_16?
-
-
-have personal graphics library inherit from adafruit_gfx
-
-research event listeners
-
-
-idea for graphics structure:
-canvas class -> graphics class which stores a reference/pointer to the canvas class -> graphics class inherits from ada_gfx
-should the buffer be stored in the canvas class? or should the canvas class store a pointer to a buffer defined elsewhere?
-
 MODES vs ANIMATIONS
 MODES: emoticons, eyeball, flowey, 8ball, etc. changes when you press channel up or down. Determines what animations are played.
 ANIMATIONS: can play and render concurrently. 
+Both need to implement the update() functionality
