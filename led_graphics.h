@@ -9,11 +9,15 @@
 #include "led_canvas.h"
 
 //class Drawable;
-class ledGraphics
+class LedGraphics
 {
   public:
     //Constructor:
-    ledGraphics(Canvas* t_canvas);
+    LedGraphics(Canvas* t_canvas);
+
+    //Accessors
+    int getWidth();
+    int getHeight();
 
     //Draw Functions:
     void drawPixel(int x, int y, CRGB t_color, int t_a = 0);

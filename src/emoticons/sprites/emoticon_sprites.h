@@ -40,13 +40,13 @@ const unsigned char epd_bitmap_mouth_o [] PROGMEM = {
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 256)
 const int epd_bitmap_mouth_allArray_LEN = 8;
 const unsigned char* epd_bitmap_mouth_allArray[8] = {
-	epd_bitmap_mouth_3,
+	epd_bitmap_mouth_smile,
 	epd_bitmap_mouth_D,
 	epd_bitmap_mouth_I,
 	epd_bitmap_mouth_O_big,
 	epd_bitmap_mouth_P,
 	epd_bitmap_mouth_T,
-	epd_bitmap_mouth_smile,
+	epd_bitmap_mouth_3,
 	epd_bitmap_mouth_o
 };
 
@@ -71,8 +71,8 @@ const unsigned char epd_bitmap_eyes_semicolon [] PROGMEM = {
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 96)
 const int epd_bitmap_eyes_allArray_LEN = 3;
 const unsigned char* epd_bitmap_eyes_allArray[3] = {
-	epd_bitmap_eyes_bar,
 	epd_bitmap_eyes_colon,
+	epd_bitmap_eyes_bar,
 	epd_bitmap_eyes_semicolon
 };
 

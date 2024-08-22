@@ -1,9 +1,18 @@
 TODO LIST:
 - update formatting to match that of adafruit gfx library
 - add a proper readme
-- add define guards to .h files
-- function for drawing sprites
 - ability to draw rotated sprites
+- figure out how to implement creation/destruction of channel objects when switching
+- add shift functions in LedGrpahics
+	- (shiftUp, shiftDown, shiftLeft, shiftRight), no negative values allowed
+	- (shiftV, shiftH), negative values allowed for shifting up and left, respectively
+- Implement channel deletion/replacement for switching channels
+	- have a single channel object that gets deleted and remade
+- Implement enter() and exit() functions for channels and other state-like classes
+	- Call channel.enter() whenever channel changes, call channel.exit() right before changing channels
+- Implement a State class and have channels inherit from it
+	- this also makes it so changeState() isn't needed as each state will handle itself with enter()
+
 
 ______________________
 
@@ -15,20 +24,28 @@ BUG LIST:
 
 ______________________
 
+MODE IDEAS: 
+- terminal
+- emoticons
+- eyeball
+- audio visualizer
+- fishbowl
+- undertale
+- 8-ball
+
+
+
+______________________
 
 listen() -> changes newMode variable to 1
 each animation checks if newMode is 0 or 1, if it's 0 then loop if it's 1 then call changeMode() (which changes mode and sets newMode to 0)
-
-^^potential problems: 
-- does this mess up frame timing with millis() since loop() doesn't reset after each frame?
-- would dead frame time need to be filled with a loop that repeatedly calls listen()? if so then that breaks FastLED 
-	-^^ no it doesn't, manually call FastLED.show() once per iteration since FastLED.delay() just calls show() every frame anyways
 
 ways of storing animations:
 - case/switch in loop() which runs certain code/animations based on current mode variable value
 - each animation as its own function in a separate file
 - each animation as its own function, each with its own file
 >>for the above, is it possible to sequentially add files in a folder to an array then call the function that corresponds to the index?
+- each animation as it's own CLASS which implements update() and can keep track of its own data, animations, etc. and can be deconstructed
 
 >>
 - have folder called 'animations'
@@ -39,6 +56,9 @@ ways of storing animations:
 >>
 - have file called 'animations.ino'
 - have each animation be its own function (or class)
+
+>>
+
 
 MASKING: create a type 'mask' which can be several different things? i.e. sprite, rectangular area, circle, line, etc. maybe have each item of type mask have a check() function which checks if a given index is a 1 or a 0, implementation varies depending on what kind of mask it is
 
@@ -52,3 +72,68 @@ MODES vs ANIMATIONS
 MODES: emoticons, eyeball, flowey, 8ball, etc. changes when you press channel up or down. Determines what animations are played.
 ANIMATIONS: can play and render concurrently. 
 Both need to implement the update() functionality
+
+
+Class Updatable{
+	virtual void update()				<------- Might not need to bother implementing a parent Updatable class
+}
+
+	Class LedAnimation : updatable{
+		...
+	}
+
+		Class AnimBouncingBall : led_Animation{
+			...
+		}
+
+
+
+	Class LedChannel : updatable{
+		...
+	}
+
+		Class ChEmoticons : led_Channel{
+			...
+		}
+
+
+
+How to handle scope of canvas and graphics?
+	^^Do I have to store a pointer to the canvas object or grpahics object? Or pass a pointer through to the update() function? Do I need to refactor the code and have the canvas object store a reference to the graphics object? Maybe change the scope of the canvas object to be public?
+How to deal with class bloat? (would rather not have a billion different classes)
+	^^Might be able to skip implementing Updatable and just implement update for each class
+
+Since only a single channel will be active at a time, should I use a container for active objects like normal or construct/deconstruct the classes as needed to save memory?
+
+Each channel will need its own container for active animations to run update() on
+
+Should I bother implementing a state for inactive/paused animations (needs separate container and code to switch between containers)
+	^^Better implementation: Have one array and a numActive counter - sort anims by active/inactive, anything after anims[numActive] is inactive
+
+
+LedChannel and LedAnimation as virtual classes with 
+
+PARTS OF A CHANNEL
+update function
+container full of currently running animations (or updatable entities)
+
+
+PARTS OF AN ANIMATION
+update function
+
+should each channel store a pointer to the graphics object to use, or should it be passed to update() as an argument?
+	^^argument might be better since the graphics object needs to be passed or stored every time you go deeper
+		(channel's update() -> state's update() -> animation's update())
+	^^ALTERNATIVELY: since the channel object is being passed through the pipeline, store graphics object in channel and call channel.graphics.whatever()
+
+
+does enter() need to act as a constructor/reset button for static classes?
+
+should calling canvas.update() and FastLED.show() happen within the channel/state, or should it only occur in main loop after the channel's update() is called?
+	^^calling these functions from within the channel would allow for more precise control (i.e. not updating canvas when not necessary) but would require either 
+	1. making the canvas + fastLED global
+	2. passing the canvas + fastLED to the update() function
+	3. storing canvas + fastLED pointers in the channel + states
+	or a combination of all 3
+
+how to handle reading inputs from different channels and states? data scope seems to be a recurring issue

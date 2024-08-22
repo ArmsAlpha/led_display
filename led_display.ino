@@ -2,18 +2,17 @@
 //as well as https://github.com/lyriarte/StripDisplay/ for key insight on using bitmaps
 //and https://twitter.com/minbitt for inspiration and being super cool
 
-//MODE IDEAS: terminal, emoticons, text, eyeball, audio visualizer, fishbowl, undertale, 8-ball
-//MASKING: allow sprites to be used for masking effects such as fade/color change
-//POSITIVE/NEGATIVE MASKING: Apply effects to the bits included in sprite mask, or all bits NOT covered by sprite mask
-//Possibly use fastLED's build-in palette framework for colors?
-
 #include <Adafruit_CircuitPlayground.h>
 #include <FastLED.h>
 #include <Adafruit_GFX.h>
 
 #include "led_canvas.h"
 #include "led_graphics.h"
-#include "sprites/emoticon_sprites.h"
+#include "led_animation.h"
+#include "crt_channel.h"
+#include "src/emoticons/ch_emoticons.h"
+
+//#include "src/emoticons/sprites/emoticon_sprites.h"
 //#include "led_drawables.h"
 
 #define FRAME_TIME_MILLIS 250 //Duration of a single frame in millis
@@ -27,15 +26,22 @@
 #define LED_PIN 6
 #define BUTTON_LEFT 4
 #define BUTTON_RIGHT 5
-#define BUTTON_POWER 4
+#define BUTTON_CH_UP 4
+#define BUTTON_CH_DOWN
+#define BUTTON_A 5
+#define BUTTON_B
+#define BUTTON_POWER
 
 CRGB leds[NUM_LEDS];
 CRGB leds_buffer[NUM_LEDS];
 Canvas canvas(NUM_LEDS_X, NUM_LEDS_Y, leds, leds_buffer, Canvas::ORIGIN_SW, Canvas::WRAP_H, 1);
-ledGraphics graphics(&canvas);
+LedGraphics graphics(&canvas);
 
-uint8_t mode = 0; //Keeps track of current display mode
-unsigned long frametimer = 0; //Keeps track of how long the current frame has been running for
+CrtChannel* channel;
+
+uint8_t mode = 0; //Current display mode/channel
+uint8_t power = 0; //Keeps track of whether monitor display is 'on' or 'off'
+unsigned long frametimer = 0; //How long the current frame has been running for
 int i = 0;
 
 
@@ -44,10 +50,6 @@ int i = 0;
 void update(){
 
 }
-
-
-
-
 
 //listen(): Check for new inputs, called every frame. Returns a value based on input
 uint8_t listen(){
@@ -65,43 +67,30 @@ uint8_t inRange(float low, float high, float x)
     return ((x - high) * (x - low) <= 0);
 }
 
-//shiftup(): Shifts the contents of the canvas up by the number of lines specified
-void shiftup(int num_lines){
-  for(int i = 0; i > canvas.getHeight(); i++){
-    for(int j = 0; j > canvas.getWidth(); j++){     
-      if(i - num_lines >= 0) canvas.drawPixel(j, i - num_lines, canvas.getPoint(j, i), 0);
-    }
-  }
-}
-
-
-//------------ANIMATIONS------------
-//scrolls a string from right to left
-void marquee(char str[], int len, int y, CHSV color){
-  
-}
-
-
 //-------------SETUP-------------
 void setup() {
   delay(4000);
   // put your setup code here, to run once:
+
   //init board parameters
   CircuitPlayground.begin(50);
   CircuitPlayground.setAccelRange(LIS3DH_RANGE_2_G);
   Serial.begin(9600);
+
   //init leds
   FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
-  //graphics.erase();
-  //canvas.update();
-  //FastLED.show();
+
   //init pins
   pinMode(LED_PIN, OUTPUT);
 
+  //init channel
+  channel = new ChEmoticons();
+  channel->enter(&graphics);
+
   //Test graphics
-  graphics.drawSprite(2, 3, 8, 9, epd_bitmap_eyes_allArray[1], CRGB(255, 255, 255));
-  graphics.drawSprite(9, 3, 8, 9, epd_bitmap_mouth_allArray[1], CRGB(255, 255, 255));
+  //graphics.drawSprite(2, 3, 8, 9, epd_bitmap_eyes_allArray[1], CRGB(255, 255, 255));
+  //graphics.drawSprite(9, 3, 8, 9, epd_bitmap_mouth_allArray[1], CRGB(255, 255, 255));
 
   canvas.update();
   FastLED.show();
@@ -114,63 +103,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   frametimer = millis();
 
-  switch(mode){
-    case 0: //Off - Don't do anything
-      /*
-      graphics.drawPoint(i % NUM_LEDS_X, i / NUM_LEDS_X ,CRGB(255, 255, 255), 0);
-      canvas.update();
-      FastLED.show();
-      graphics.drawPoint(i % NUM_LEDS_X, i / NUM_LEDS_X, CRGB(0, 0, 0), 0);
-      i = (i + 1) % NUM_LEDS;
-      graphics.drawPoint(0, 0, CRGB(0, 255, 0), 0);
-      graphics.drawPoint(19, 14, CRGB(255, 0, 0), 0);
-      */
-      break;
-
-    case 1: //Power on/off - play a little animation when turning the monitor on/off
-      break;
-
-    case 2: //Face
-      /*IDEAS:
-       - Have eyes blink at semi-random intervals (chance to blink after x seconds, force blink after x+y seconds)
-       - Have mouth move when speaker detects sound
-       - Buttons to control expressions
-       */
-      break;
-    case 3: //Eyeball
-      /*IDEAS:
-       - Have pupil move based on rotation (rot. f/b = move u/d,  rot. sideways = move l/r
-       - Have eyeball blink every once in a while (obscures pupil
-       - Button to change pupil type: normal, colored, cat eye, etc.
-       - Pupil animations? like fire or something
-       */
-       break; 
-
-       case 4: //Twitch Chat
-      /*IDEAS:
-       - Display lines that scroll up every so often to emulate a scrolling chat
-       - Initial line is random length and color to represent username
-       - Possibility of random colored bit + empty bit to represent sub badge
-       - SUbsequent lines are grey and can be random length/span multiple lines
-       - Duration before scrolling is random but is a multiple of the time it takes for twitch chat to update
-       - Scroll is achieved by moving contents of buffer up x lines depending on how many new chats are added
-       
-       - Make function drawMessage() which takes in parameters for lengths (name, message, etc.)
-       */
-
-      //Draw name of random length and color
-      //(Random) Overwrite first 2 bits of name with a color followed by black
-      //Decide how long the message will be
-      //Start drawing message 2 spaces after name ends
-      //>If message would reach the edge of the screen, move down a line and continue until counter is done
-      //>While message is being drawn, have chance to replace bit with blank bit if there have been consecutive bits drawn
-      //
-
-      //!!!Have chance to draw chat reminder instead of message
-      break;
-    }
-
-  //listen();
+  channel->update(&graphics);
+  canvas.update();
+  FastLED.show();
   
   while(millis() - frametimer < FRAME_TIME_MILLIS){
     //Listen for input and kill time until the current frame is supposed to be over
