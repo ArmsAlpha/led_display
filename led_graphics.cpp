@@ -149,7 +149,11 @@
 
   void LedGraphics::linearFade(int amount){
     for(int i = 0; i < canvas->getSize(); i++){
-      canvas->getLEDs()[i].subtractFromRGB(amount);
+      canvas->getBuffer()[i].subtractFromRGB(amount);
+      //canvas->getLEDs()[i] -= CRGB(amount, amount, amount);
+      //canvas->getLEDs()[i] = CRGB(255,0,0);
+      //canvas->drawPixel(5, 5, CRGB(255,0,0));
+
     }
   }
   

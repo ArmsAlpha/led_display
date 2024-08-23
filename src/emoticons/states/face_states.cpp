@@ -103,7 +103,7 @@ void LoadingFaceState::enter(ChEmoticons& ch, LedGraphics* g, int input, float m
 FaceState* LoadingFaceState::update(ChEmoticons& ch, LedGraphics* g, int input, float mZ, float mY){
 	
 	if(timer_ == 2){
-		//g->linearFade(30);
+		g->linearFade(35);
 		//g->erase();
 		timer_ = 0;
 		step_ = (step_ + 1) % 8;
@@ -114,29 +114,29 @@ FaceState* LoadingFaceState::update(ChEmoticons& ch, LedGraphics* g, int input, 
 		g->fillRect(9, 1, 2, 2, CRGB(255, 255, 255));
 		break;
 	case 1:
-		//g->drawSprite(12, 2, 3, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
-		g->fillRect(12, 2, 3, 3, CRGB(255, 255, 255));
+		g->drawSprite(12, 2, 8, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
+		//g->fillRect(12, 2, 3, 3, CRGB(255, 255, 255));
 		break;
 	case 2:
 		g->fillRect(14, 6, 2, 2, CRGB(255, 255, 255));
 		break;
 	case 3:
-		//g->drawSprite(12, 9, 3, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
-		g->fillRect(12, 9, 3, 3, CRGB(255, 255, 255));
+		g->drawSprite(12, 9, 8, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
+		//g->fillRect(12, 9, 3, 3, CRGB(255, 255, 255));
 		break;
 	case 4:
 		g->fillRect(9, 11, 2, 2, CRGB(255, 255, 255));
 		break;
 	case 5:
-		//g->drawSprite(5, 9, 3, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
-		g->fillRect(5, 9, 3, 3, CRGB(255, 255, 255));
+		g->drawSprite(5, 9, 8, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
+		//g->fillRect(5, 9, 3, 3, CRGB(255, 255, 255));
 		break;
 	case 6:
 		g->fillRect(4, 6, 2, 2, CRGB(255, 255, 255));
 		break;
 	case 7:
-		//g->drawSprite(5, 2, 3, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
-		g->fillRect(5, 2, 3, 3, CRGB(255, 255, 255));
+		g->drawSprite(5, 2, 8, 3, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
+		//g->fillRect(5, 2, 3, 3, CRGB(255, 255, 255));
 		break;
 	}
 
@@ -165,8 +165,7 @@ ConfusedFaceState::ConfusedFaceState(){
 void ConfusedFaceState::enter(ChEmoticons& ch, LedGraphics* g, int input, float mZ, float mY){
 	Serial.println("Enter(ConfusedFaceState)");
 	g->erase();
-	//g->drawSprite(7, 2, 8, 11, epd_bitmap_icons_allArray[2], CRGB(255, 255, 255));
-	g->drawSprite(7, 2, 2, 2, epd_bitmap_misc_allArray[0], CRGB(255, 255, 255));
+	g->drawSprite(7, 2, 8, 11, epd_bitmap_icons_allArray[2], CRGB(255, 255, 255));
 }
 
 FaceState* ConfusedFaceState::update(ChEmoticons& ch, LedGraphics* g, int input, float mZ, float mY){

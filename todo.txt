@@ -1,5 +1,6 @@
 TODO 8/23:
 - Figure out why some sprites don't like loading
+	^^WIDTH MUST BE MULTIPLE OF 8
 
 - Implement Voice control
 - Eyeball channel
@@ -35,6 +36,7 @@ BUG LIST:
 	- adding a delay fixes this, but not when using fastLED.delay() - might have something to do with calling function too quickly??? (fastLED.delay() repeatedly calls fastLED.show() while waiting)
 	- could also be related to calling fastLED.show() back-to-back?
 	- UPDATE: Definitely seems to be related to the data polling speed, although it seems like the speed should be correct (1ms), maybe try manually setting clock speed in constructor?
+- why does drawSprite() crash when a sprite's width is defined as < 8?
 
 ______________________
 
