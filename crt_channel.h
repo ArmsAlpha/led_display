@@ -13,9 +13,9 @@ class CrtChannel{
   public:
     CrtChannel(){}
     virtual ~CrtChannel() {}
-    virtual void enter(LedGraphics* g) = 0;
-    virtual void update(LedGraphics* g) = 0;
-    virtual void exit(LedGraphics* g) = 0;
+    virtual void enter(LedGraphics* g, int input, float mZ, float mY) = 0;
+    virtual void update(LedGraphics* g, int input, float mZ, float mY) = 0;
+    virtual void exit(LedGraphics* g, int input, float mZ, float mY) = 0;
 
   private:
 

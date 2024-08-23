@@ -15,7 +15,7 @@
 //#include "src/emoticons/sprites/emoticon_sprites.h"
 //#include "led_drawables.h"
 
-#define FRAME_TIME_MILLIS 250 //Duration of a single frame in millis
+#define FRAME_TIME_MILLIS 100 //Duration of a single frame in millis
 //LED-related defines
 #define NUM_LEDS 300
 #define NUM_LEDS_X 20
@@ -40,7 +40,9 @@ LedGraphics graphics(&canvas);
 CrtChannel* channel;
 
 uint8_t mode = 0; //Current display mode/channel
-uint8_t power = 0; //Keeps track of whether monitor display is 'on' or 'off'
+uint8_t power = 1; //Keeps track of whether monitor display is 'on' or 'off'
+int input = 0;
+uint8_t input_lockout = 1000/FRAME_TIME_MILLIS;
 unsigned long frametimer = 0; //How long the current frame has been running for
 int i = 0;
 
@@ -83,10 +85,12 @@ void setup() {
 
   //init pins
   pinMode(LED_PIN, OUTPUT);
+  pinMode(BUTTON_LEFT, INPUT_PULLDOWN);
+  pinMode(BUTTON_RIGHT, INPUT_PULLDOWN);
 
   //init channel
   channel = new ChEmoticons();
-  channel->enter(&graphics);
+  channel->enter(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
 
   //Test graphics
   //graphics.drawSprite(2, 3, 8, 9, epd_bitmap_eyes_allArray[1], CRGB(255, 255, 255));
@@ -103,13 +107,42 @@ void loop() {
   // put your main code here, to run repeatedly:
   frametimer = millis();
 
-  channel->update(&graphics);
+  /*
+  if(input_lockout == 0 && input == BUTTON_CH_UP){
+    //Change Channel
+    input_lockout = 1000/FRAME_TIME_MILLIS;
+    channel->exit(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
+    delete channel;
+    if(mode == 0) channel = new ChEyeball();
+    else if (mode == 1) channel = new ChErrors();
+    else if (mode == 2) channel = new ChEmoticons();
+    channel->enter(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
+    mode = (mode + 1) % 3;
+  }
+  */
+
+  channel->update(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
+
+
   canvas.update();
   FastLED.show();
+  delay(1);
+
+  //Serial.println(input);
+
+  if (input_lockout > 0) input_lockout--;
   
   while(millis() - frametimer < FRAME_TIME_MILLIS){
     //Listen for input and kill time until the current frame is supposed to be over
     listen();
+    if (digitalRead(BUTTON_LEFT)) {
+      input = BUTTON_LEFT;
+    }
+    else if (digitalRead(BUTTON_RIGHT)){
+      input = BUTTON_RIGHT;
+    }
+    else input = 0;
+
     FastLED.show();
     delay(1);
   }

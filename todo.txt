@@ -1,18 +1,32 @@
+TODO 8/23:
+- Figure out why some sprites don't like loading
+
+- Implement Voice control
+- Eyeball channel
+	- Import sprites for eyelid, blinking
+	- Have pupil follow head tilt
+	- blink every once in a while
+- Errors channel
+	- SMPTE
+	- Static
+	- BSOD
+- Merge testing branch with main
+
+
+
 TODO LIST:
 - update formatting to match that of adafruit gfx library
 - add a proper readme
 - ability to draw rotated sprites
-- figure out how to implement creation/destruction of channel objects when switching
 - add shift functions in LedGrpahics
 	- (shiftUp, shiftDown, shiftLeft, shiftRight), no negative values allowed
 	- (shiftV, shiftH), negative values allowed for shifting up and left, respectively
 - Implement channel deletion/replacement for switching channels
 	- have a single channel object that gets deleted and remade
-- Implement enter() and exit() functions for channels and other state-like classes
-	- Call channel.enter() whenever channel changes, call channel.exit() right before changing channels
-- Implement a State class and have channels inherit from it
-	- this also makes it so changeState() isn't needed as each state will handle itself with enter()
-
+- Have all inputs be stored in a struct which is passed through the update() functions
+- Neaten up implementation of input reading in main loop, get rid of hard-coded values for classes checking for input button
+- Find a more elegant solution to switch channels (cycle through all channel classes in folder without having to change main loop)
+- Scan for reused code that can be consolidated (like the code for input lockout timers in every state)
 
 ______________________
 
@@ -137,3 +151,5 @@ should calling canvas.update() and FastLED.show() happen within the channel/stat
 	or a combination of all 3
 
 how to handle reading inputs from different channels and states? data scope seems to be a recurring issue
+
+EYEBALL IDEA: Have an pupil animation class stored in the eyeball class - have it be swapped around like the channels/states and call update() in order to have the animation play out. 
