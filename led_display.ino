@@ -11,6 +11,8 @@
 #include "led_animation.h"
 #include "crt_channel.h"
 #include "src/emoticons/ch_emoticons.h"
+#include "src/eyeball/ch_eyeball.h"
+#include "src/errors/ch_errors.h"
 
 //#include "src/emoticons/sprites/emoticon_sprites.h"
 //#include "led_drawables.h"
@@ -107,19 +109,21 @@ void loop() {
   // put your main code here, to run repeatedly:
   frametimer = millis();
 
-  /*
+   //Change Channel
   if(input_lockout == 0 && input == BUTTON_CH_UP){
-    //Change Channel
-    input_lockout = 1000/FRAME_TIME_MILLIS;
+    
+    input_lockout = 1000/FRAME_TIME_MILLIS; //Reset lockout timer
     channel->exit(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
     delete channel;
+    Serial.print("Changing mode from ");
+    Serial.println(mode);
     if(mode == 0) channel = new ChEyeball();
     else if (mode == 1) channel = new ChErrors();
     else if (mode == 2) channel = new ChEmoticons();
     channel->enter(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
     mode = (mode + 1) % 3;
   }
-  */
+  
 
   channel->update(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
 
