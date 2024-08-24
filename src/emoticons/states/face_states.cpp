@@ -15,11 +15,11 @@ DefaultFaceState::DefaultFaceState(){
 
 void DefaultFaceState::enter(ChEmoticons& ch, LedGraphics* g, int input, float mZ, float mY){
 	Serial.println("Enter(DefaultFaceState)");
+	//mouth_i_ = last_mouth_i_;
 }
 
 FaceState* DefaultFaceState::update(ChEmoticons& ch, LedGraphics* g, int input, float mZ, float mY){
 	g->erase();
-
 	//Handle Blinking
 	if(blink_timer_ <= 0){
 		ch.eyes_i_ = 0;
@@ -31,7 +31,7 @@ FaceState* DefaultFaceState::update(ChEmoticons& ch, LedGraphics* g, int input, 
 	}
 
 	//Handle inputs
-	if(ch.input_lockout_ == 0 && input == 4){
+	if(ch.input_lockout_ == 0 && input == 5){
 		ch.mouth_i_ = (ch.mouth_i_ + 1) % 6;
 		ch.input_lockout_ = 5;
 	}

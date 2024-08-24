@@ -22,6 +22,7 @@ class ChEmoticons : public CrtChannel{
     void exit(LedGraphics* g, int input, float mZ, float mY);
     int eyes_i_;
     int mouth_i_;
+    int last_mouth_i_;
     int input_lockout_;
     int state_lockout_;
 

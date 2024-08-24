@@ -7,6 +7,7 @@ ChEmoticons::ChEmoticons(){
 	face_state_ = new DefaultFaceState();
     eyes_i_ = 0;
     mouth_i_ = 0;
+    last_mouth_i_ = 0;
     input_lockout_ = 5;
     state_lockout_ = 10;
 }

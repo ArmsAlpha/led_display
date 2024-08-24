@@ -94,10 +94,6 @@ void setup() {
   channel = new ChEmoticons();
   channel->enter(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
 
-  //Test graphics
-  //graphics.drawSprite(2, 3, 8, 9, epd_bitmap_eyes_allArray[1], CRGB(255, 255, 255));
-  //graphics.drawSprite(9, 3, 8, 9, epd_bitmap_mouth_allArray[1], CRGB(255, 255, 255));
-
   canvas.update();
   FastLED.show();
 
@@ -111,7 +107,6 @@ void loop() {
 
    //Change Channel
   if(input_lockout == 0 && input == BUTTON_CH_UP){
-    
     input_lockout = 1000/FRAME_TIME_MILLIS; //Reset lockout timer
     channel->exit(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
     delete channel;
@@ -123,28 +118,37 @@ void loop() {
     channel->enter(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
     mode = (mode + 1) % 3;
   }
-  
 
   channel->update(&graphics, input, CircuitPlayground.motionZ(), CircuitPlayground.motionY());
-
-
+  //Apply canvas to LED array and show the LEDS on screen
   canvas.update();
   FastLED.show();
   delay(1);
 
-  //Serial.println(input);
-
+  //Decrement timers:
   if (input_lockout > 0) input_lockout--;
   
+  //Serial.print("Volume: ");
+  //Serial.println(CircuitPlayground.mic.soundPressureLevel(10));
+
+  //Listen for input and kill time until the current frame is supposed to be over
   while(millis() - frametimer < FRAME_TIME_MILLIS){
-    //Listen for input and kill time until the current frame is supposed to be over
     listen();
+    //Inputs:
     if (digitalRead(BUTTON_LEFT)) {
+      //Serial.println("BUTTON_LEFT PRESSED");
       input = BUTTON_LEFT;
     }
     else if (digitalRead(BUTTON_RIGHT)){
+      //Serial.println("BUTTON_RIGHT PRESSED");
       input = BUTTON_RIGHT;
     }
+    /*
+    else if (CircuitPlayground.mic.soundPressureLevel(10) > 82){
+      //Serial.println("IT'S LOUD");
+      input = 9;
+    }
+    */
     else input = 0;
 
     FastLED.show();

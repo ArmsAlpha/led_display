@@ -42,7 +42,7 @@ class StaticErrorState : public ErrorState{
     void exit(ChErrors& ch, LedGraphics* g, int input, float mZ, float mY);
 
   private:
-
+    int randnum_;
 
 };
 
