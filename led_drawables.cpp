@@ -22,6 +22,7 @@
     }
     int Drawable::get_size(){
       //TODO: return array of [s_x, s_y]
+      return 0;
     }
     int Drawable::get_alpha(){
       return alpha;

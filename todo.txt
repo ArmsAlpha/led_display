@@ -1,0 +1,157 @@
+TODO 8/23:
+- Figure out why some sprites don't like loading
+	^^WIDTH MUST BE MULTIPLE OF 8
+
+- Implement Voice control
+- Eyeball channel
+	- Import sprites for eyelid, blinking
+	- Have pupil follow head tilt
+	- blink every once in a while
+- Errors channel
+	- SMPTE
+	- Static
+	- BSOD
+- Merge testing branch with main
+
+
+
+TODO LIST:
+- update formatting to match that of adafruit gfx library
+- add a proper readme
+- ability to draw rotated sprites
+- add shift functions in LedGrpahics
+	- (shiftUp, shiftDown, shiftLeft, shiftRight), no negative values allowed
+	- (shiftV, shiftH), negative values allowed for shifting up and left, respectively
+- Implement channel deletion/replacement for switching channels
+	- have a single channel object that gets deleted and remade
+- Have all inputs be stored in a struct which is passed through the update() functions
+- Neaten up implementation of input reading in main loop, get rid of hard-coded values for classes checking for input button
+- Find a more elegant solution to switch channels (cycle through all channel classes in folder without having to change main loop)
+- Scan for reused code that can be consolidated (like the code for input lockout timers in every state)
+
+______________________
+
+BUG LIST:
+- why are leds being drawn improperly when calling FastLed.show() without calling canvas.update()?????
+	- adding a delay fixes this, but not when using fastLED.delay() - might have something to do with calling function too quickly??? (fastLED.delay() repeatedly calls fastLED.show() while waiting)
+	- could also be related to calling fastLED.show() back-to-back?
+	- UPDATE: Definitely seems to be related to the data polling speed, although it seems like the speed should be correct (1ms), maybe try manually setting clock speed in constructor?
+- why does drawSprite() crash when a sprite's width is defined as < 8?
+
+______________________
+
+MODE IDEAS: 
+- terminal
+- emoticons
+- eyeball
+- audio visualizer
+- fishbowl
+- undertale
+- 8-ball
+
+
+
+______________________
+
+listen() -> changes newMode variable to 1
+each animation checks if newMode is 0 or 1, if it's 0 then loop if it's 1 then call changeMode() (which changes mode and sets newMode to 0)
+
+ways of storing animations:
+- case/switch in loop() which runs certain code/animations based on current mode variable value
+- each animation as its own function in a separate file
+- each animation as its own function, each with its own file
+>>for the above, is it possible to sequentially add files in a folder to an array then call the function that corresponds to the index?
+- each animation as it's own CLASS which implements update() and can keep track of its own data, animations, etc. and can be deconstructed
+
+>>
+- have folder called 'animations'
+- have each animation function be in its own file in this folder
+- either at compile or run time, add functions to an array in alphabetical order
+- when choosing which animation to run, call anims[mode]()
+
+>>
+- have file called 'animations.ino'
+- have each animation be its own function (or class)
+
+>>
+
+
+MASKING: create a type 'mask' which can be several different things? i.e. sprite, rectangular area, circle, line, etc. maybe have each item of type mask have a check() function which checks if a given index is a 1 or a 0, implementation varies depending on what kind of mask it is
+
+STATIC VARIABLES KEEP THEIR VALUES THROUGHOUT DIFFERENT CALLS OF A FUNCTION
+STATIC CLASS VARIABLES ARE SHARED BETWEEN INSTANCES OF THE CLASS
+STATIC FUNCTIONS IN A CLASS CAN BE USED WITHOUT AN INSTANCE
+
+use init when functions in constructor can't guarantee success
+
+MODES vs ANIMATIONS
+MODES: emoticons, eyeball, flowey, 8ball, etc. changes when you press channel up or down. Determines what animations are played.
+ANIMATIONS: can play and render concurrently. 
+Both need to implement the update() functionality
+
+
+Class Updatable{
+	virtual void update()				<------- Might not need to bother implementing a parent Updatable class
+}
+
+	Class LedAnimation : updatable{
+		...
+	}
+
+		Class AnimBouncingBall : led_Animation{
+			...
+		}
+
+
+
+	Class LedChannel : updatable{
+		...
+	}
+
+		Class ChEmoticons : led_Channel{
+			...
+		}
+
+
+
+How to handle scope of canvas and graphics?
+	^^Do I have to store a pointer to the canvas object or grpahics object? Or pass a pointer through to the update() function? Do I need to refactor the code and have the canvas object store a reference to the graphics object? Maybe change the scope of the canvas object to be public?
+How to deal with class bloat? (would rather not have a billion different classes)
+	^^Might be able to skip implementing Updatable and just implement update for each class
+
+Since only a single channel will be active at a time, should I use a container for active objects like normal or construct/deconstruct the classes as needed to save memory?
+
+Each channel will need its own container for active animations to run update() on
+
+Should I bother implementing a state for inactive/paused animations (needs separate container and code to switch between containers)
+	^^Better implementation: Have one array and a numActive counter - sort anims by active/inactive, anything after anims[numActive] is inactive
+
+
+LedChannel and LedAnimation as virtual classes with 
+
+PARTS OF A CHANNEL
+update function
+container full of currently running animations (or updatable entities)
+
+
+PARTS OF AN ANIMATION
+update function
+
+should each channel store a pointer to the graphics object to use, or should it be passed to update() as an argument?
+	^^argument might be better since the graphics object needs to be passed or stored every time you go deeper
+		(channel's update() -> state's update() -> animation's update())
+	^^ALTERNATIVELY: since the channel object is being passed through the pipeline, store graphics object in channel and call channel.graphics.whatever()
+
+
+does enter() need to act as a constructor/reset button for static classes?
+
+should calling canvas.update() and FastLED.show() happen within the channel/state, or should it only occur in main loop after the channel's update() is called?
+	^^calling these functions from within the channel would allow for more precise control (i.e. not updating canvas when not necessary) but would require either 
+	1. making the canvas + fastLED global
+	2. passing the canvas + fastLED to the update() function
+	3. storing canvas + fastLED pointers in the channel + states
+	or a combination of all 3
+
+how to handle reading inputs from different channels and states? data scope seems to be a recurring issue
+
+EYEBALL IDEA: Have an pupil animation class stored in the eyeball class - have it be swapped around like the channels/states and call update() in order to have the animation play out. 
